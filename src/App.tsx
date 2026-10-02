@@ -4,7 +4,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { LogoProvider } from './context/LogoContext';
 import { SplashScreen } from './components/SplashScreen';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -21,7 +20,6 @@ import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { RegisterInterestModal } from './components/RegisterInterestModal';
-import { LogoUploadModal } from './components/LogoUploadModal';
 import { ProjectPage } from './components/ProjectPage';
 import { FEATURED_PROJECTS, Project } from './data/content';
 
@@ -126,8 +124,7 @@ export default function App() {
   };
 
   return (
-    <LogoProvider>
-      <div className="min-h-screen bg-[#000000] text-[#A3A3A3] font-sans selection:bg-[#E10600] selection:text-white relative">
+    <div className="min-h-screen bg-[#000000] text-[#A3A3A3] font-sans selection:bg-[#E10600] selection:text-white relative">
         {/* 1) SPLASH SCREEN */}
         {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
@@ -206,9 +203,6 @@ export default function App() {
           preselectedProject={preselectedProjectName}
         />
 
-        {/* LOGO UPLOAD MODAL */}
-        <LogoUploadModal />
       </div>
-    </LogoProvider>
   );
 }

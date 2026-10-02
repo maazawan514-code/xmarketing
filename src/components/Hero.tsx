@@ -1,6 +1,5 @@
 import React from 'react';
 import { XLogo } from './XLogo';
-import { useLogo } from '../context/LogoContext';
 import { ArrowRight, Sparkles, Building2, Users, CheckCircle, ShieldCheck, CreditCard, Headphones } from 'lucide-react';
 
 interface HeroProps {
@@ -9,7 +8,6 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ onExploreProjects, onRegisterInterest }) => {
-  const { openModal } = useLogo();
   return (
     <section id="home" className="relative min-h-[92vh] flex items-center justify-center pt-28 pb-16 overflow-hidden bg-[#000000]">
       {/* Background Subtle Red Grids & Ambient Red Spotlight */}
@@ -127,11 +125,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreProjects, onRegisterInteres
               {/* Inner Orbit with red ring */}
               <div className="absolute inset-16 rounded-full border border-[#E10600]/40 shadow-[0_0_35px_rgba(225,6,0,0.35)] bg-[#0A0A0A]/95 backdrop-blur-xl flex items-center justify-center">
                 {/* Center Round Red-on-Black X Logo */}
-                <div
-                  onClick={openModal}
-                  title="Click to change or upload official logo"
-                  className="w-24 h-24 sm:w-28 sm:h-28 transform hover:scale-105 transition-transform duration-300 cursor-pointer"
-                >
+                <div className="w-24 h-24 sm:w-28 sm:h-28 transform hover:scale-105 transition-transform duration-300">
                   <XLogo className="w-full h-full" glow={true} withCircle={true} />
                 </div>
               </div>

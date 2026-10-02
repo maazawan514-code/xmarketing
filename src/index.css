@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --color-red: #E10600;
+    --color-red-deep: #8B0000;
+    --color-red-light: #FF2A2A;
+    --color-logo-red: #FB0001;
+    --color-dark: #111111;
+    --color-bg: #000000;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #000000;
+    color: #A3A3A3;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: var(--font-heading);
+    color: #FFFFFF;
+  }
+}
+
+/* Red Gradient Text matching X Marketing Brand Colors */
+.red-gradient-text {
+  background: linear-gradient(135deg, #FF2A2A 0%, #E10600 50%, #B80000 85%, #8B0000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Red Gradient Background for Buttons & Accents */
+.red-gradient-bg {
+  background: linear-gradient(135deg, #FF2A2A 0%, #E10600 50%, #8B0000 100%);
+}
+
+/* Glassmorphism Card Style with Red Hover Glow */
+.glass-card {
+  background: rgba(17, 17, 17, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(225, 6, 0, 0.5);
+  box-shadow: 0 10px 30px -10px rgba(225, 6, 0, 0.35);
+}
+
+/* Red Glow Effects */
+.red-glow {
+  box-shadow: 0 0 35px -5px rgba(225, 6, 0, 0.5);
+}
+
+.red-glow-lg {
+  box-shadow: 0 0 70px -10px rgba(225, 6, 0, 0.45);
+}
+
+/* Subtle background grid with faint red tint */
+.bg-grid-red {
+  background-size: 44px 44px;
+  background-image: 
+    linear-gradient(to right, rgba(225, 6, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(225, 6, 0, 0.04) 1px, transparent 1px);
+}
+
+/* Keyframe animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse-slow {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 24s linear infinite;
+}
+
+.animate-spin-reverse-slow {
+  animation: spin-reverse-slow 32s linear infinite;
+}
+
+/* Infinite Marquee Scrolling */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+.animate-marquee:hover,
+.hover-pause:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+/* Custom Scrollbar in Pure Black & Red */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #1A1A1A;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E10600;
+}

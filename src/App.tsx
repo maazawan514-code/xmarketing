@@ -12,6 +12,7 @@ import { StatsStrip } from './components/StatsStrip';
 import { WhyChooseUs } from './components/WhyChooseUs';
 import { HowWeWork } from './components/HowWeWork';
 import { FeaturedProjects } from './components/FeaturedProjects';
+import { UpcomingProjects } from './components/UpcomingProjects';
 import { ServicesGrid } from './components/ServicesGrid';
 import { TestimonialsSlider } from './components/TestimonialsSlider';
 import { CareersBanner } from './components/CareersBanner';
@@ -169,6 +170,8 @@ export default function App() {
               onSelectProject={handleSelectProject}
               onRegisterInterest={(proj) => handleOpenRegisterInterest(proj)}
             />
+
+            <UpcomingProjects />
 
             {/* 9) SERVICES GRID */}
             <ServicesGrid onSelectService={handleSelectService} />

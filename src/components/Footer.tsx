@@ -1,5 +1,6 @@
 import React from 'react';
 import { XLogo } from './XLogo';
+import { SocialLinks } from './SocialLinks';
 import { COMPANY } from '../data/content';
 import { Phone, Mail, MapPin, MessageCircle, ArrowUp, Sparkles } from 'lucide-react';
 
@@ -64,7 +65,7 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterInterest, onNavigateHo
                   X MARKETING
                 </span>
                 <span className="text-[10px] uppercase tracking-[0.24em] text-[#FF2A2A] font-mono mt-0.5 font-medium">
-                  Real Estate · Lahore
+                  Real Estate Company
                 </span>
               </div>
             </div>
@@ -167,35 +168,7 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterInterest, onNavigateHo
             </div>
 
             {/* Socials */}
-            <div className="pt-4 flex items-center gap-3">
-              <a
-                href={COMPANY.socials.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 hover:border-[#E10600]/40 hover:text-[#FF2A2A] flex items-center justify-center text-xs transition-colors"
-                aria-label="Facebook"
-              >
-                FB
-              </a>
-              <a
-                href={COMPANY.socials.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 hover:border-[#E10600]/40 hover:text-[#FF2A2A] flex items-center justify-center text-xs transition-colors"
-                aria-label="Instagram"
-              >
-                IG
-              </a>
-              <a
-                href={COMPANY.socials.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 hover:border-[#E10600]/40 hover:text-[#FF2A2A] flex items-center justify-center text-xs transition-colors"
-                aria-label="LinkedIn"
-              >
-                IN
-              </a>
-            </div>
+            <SocialLinks className="pt-4" />
           </div>
 
         </div>

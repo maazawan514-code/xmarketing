@@ -101,7 +101,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 X MARKETING
               </span>
               <span className="text-[10px] uppercase tracking-[0.24em] text-[#A3A3A3] font-mono font-medium mt-0.5">
-                REAL ESTATE - LAHORE
+                REAL ESTATE COMPANY
               </span>
             </div>
           </a>

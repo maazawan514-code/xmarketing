@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { COMPANY, FEATURED_PROJECTS } from '../data/content';
+import { SocialLinks } from './SocialLinks';
 import { Mail, Phone, MapPin, Send, CheckCircle2, Shield, MessageCircle } from 'lucide-react';
 
 export const ContactSection: React.FC = () => {
@@ -119,6 +120,8 @@ export const ContactSection: React.FC = () => {
                 Strict confidentiality guaranteed for UHNW & overseas institutional inquiries.
               </div>
             </div>
+
+            <SocialLinks className="pt-5" />
           </div>
 
           {/* Right Column: Contact Form */}

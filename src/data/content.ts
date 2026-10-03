@@ -19,9 +19,10 @@ export const COMPANY = {
   legalNotice:
     'Prices, plans, specifications and payment terms are subject to change without notice. Registration of interest does not constitute an offer, reservation or contract. Images are artist\'s impressions.',
   socials: {
-    facebook: 'https://facebook.com',
-    instagram: 'https://instagram.com',
-    linkedin: 'https://linkedin.com',
+    facebook: 'https://www.facebook.com/profile.php?id=61594671850030',
+    instagram: 'https://www.instagram.com/_xmarketingofficial/',
+    linkedin: 'https://www.linkedin.com/company/145269210/',
+    whatsapp: 'https://wa.me/92XXXXXXXXXX',
   },
 };
 

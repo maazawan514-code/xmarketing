@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { XLogo } from './XLogo';
-import { useLogo } from '../context/LogoContext';
-import { Menu, X, ArrowRight, Sparkles, Upload } from 'lucide-react';
+import { Menu, X, ArrowRight, Sparkles } from 'lucide-react';
 
 interface NavbarProps {
   onRegisterInterest: () => void;
@@ -16,7 +15,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { openModal } = useLogo();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +32,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navLinks = [
     { label: 'Home', href: '#home' },
     { label: 'Projects', href: '#projects' },
+    { label: 'Upcoming Projects', href: '#upcoming-projects' },
     { label: 'Services', href: '#services' },
     { label: 'About', href: '#about' },
     { label: 'Careers', href: '#careers' },
@@ -96,21 +95,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
             className="flex items-center gap-3.5 group cursor-pointer"
           >
-            <div className="relative group/logo">
-              <XLogo className="w-10 h-10" glow={false} withCircle={true} />
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  openModal();
-                }}
-                title="Change or upload custom logo"
-                className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#E10600] text-white flex items-center justify-center opacity-0 group-hover/logo:opacity-100 transition-opacity shadow-md"
-              >
-                <Upload className="w-2.5 h-2.5" />
-              </button>
-            </div>
+            <XLogo className="w-10 h-10" glow={false} withCircle={true} />
             <div className="flex flex-col">
               <span className="font-extrabold text-base tracking-[0.22em] text-white uppercase group-hover:text-[#FF2A2A] transition-colors font-heading leading-tight">
                 X MARKETING
@@ -141,16 +126,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="hidden sm:flex items-center gap-2.5">
           <button
             type="button"
-            onClick={openModal}
-            title="Upload your official logo file"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-[#E10600]/40 text-neutral-400 hover:text-white text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer"
-          >
-            <Upload className="w-3.5 h-3.5 text-[#FF2A2A]" />
-            <span>Upload Logo</span>
-          </button>
-
-          <button
-            type="button"
             onClick={onRegisterInterest}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl red-gradient-bg hover:brightness-110 text-white font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-lg shadow-[#E10600]/30 hover:shadow-xl hover:shadow-[#E10600]/50 cursor-pointer transform hover:-translate-y-0.5"
           >
@@ -161,15 +136,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Mobile Hamburger Toggle */}
         <div className="flex lg:hidden items-center gap-2">
-          <button
-            type="button"
-            onClick={openModal}
-            className="sm:hidden p-2 rounded-lg bg-white/5 border border-white/10 text-neutral-300 hover:text-white"
-            title="Upload Logo"
-          >
-            <Upload className="w-4 h-4 text-[#FF2A2A]" />
-          </button>
-
           <button
             type="button"
             onClick={onRegisterInterest}
@@ -208,18 +174,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <div className="pt-4 border-t border-white/10 space-y-2">
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                openModal();
-              }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-neutral-300 font-semibold text-xs uppercase tracking-wider"
-            >
-              <Upload className="w-4 h-4 text-[#FF2A2A]" />
-              <span>Upload Custom Logo</span>
-            </button>
-
             <button
               type="button"
               onClick={() => {

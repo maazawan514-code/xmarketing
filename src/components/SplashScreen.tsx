@@ -111,9 +111,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
 
       {/* Brand Name: Wide "X MARKETING" in wide letter-spacing with glow */}
       <div className="flex flex-col items-center mb-3">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[0.38em] text-white uppercase pl-[0.38em] text-center drop-shadow-[0_2px_16px_rgba(225,6,0,0.6)] font-heading">
+        <div className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[0.38em] text-white uppercase pl-[0.38em] text-center drop-shadow-[0_2px_16px_rgba(225,6,0,0.6)] font-heading">
           X MARKETING
-        </h1>
+        </div>
         <span className="text-[10px] sm:text-xs uppercase tracking-[0.32em] text-[#A3A3A3] mt-1 font-mono">
           Real Estate Marketing & Sales · Lahore
         </span>

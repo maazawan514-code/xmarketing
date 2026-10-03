@@ -116,6 +116,25 @@
   animation-play-state: paused;
 }
 
+.upcoming-motion-ready [data-upcoming-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 650ms ease, transform 650ms ease;
+}
+
+.upcoming-motion-ready [data-upcoming-reveal].upcoming-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upcoming-motion-ready [data-upcoming-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* Custom Scrollbar in Pure Black & Red */
 ::-webkit-scrollbar {
   width: 8px;

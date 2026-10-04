@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Check, X, MapPin } from 'lucide-react';
+import miamiPenthouseImage from '../assets/images/portfolio_miami_penthouse_1790518705507.jpg';
+import londonMansionImage from '../assets/images/portfolio_london_mansion_1790518719175.jpg';
+import manhattanTowerImage from '../assets/images/portfolio_manhattan_tower_1790518732122.jpg';
+import beverlyHillsVillaImage from '../assets/images/portfolio_beverly_hills_villa_1790518743834.jpg';
 
 interface PortfolioSectionProps {
   onOpenGetStarted: () => void;
@@ -33,7 +37,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
       location: 'South Beach, Miami, FL',
       valuation: '$45,000,000 Portfolio',
       headlineMetric: '100% Sold Out in 84 Days',
-      image: '/src/assets/images/portfolio_miami_penthouse_1790518705507.jpg',
+      image: miamiPenthouseImage,
       summary: 'A curated triplex oceanfront penthouse requiring a discreet, global marketing sprint targeted at tech founders and Latin American family offices.',
       duration: '84 Days to Contract',
       metrics: [
@@ -57,7 +61,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
       location: 'Mayfair & Kensington, London, UK',
       valuation: '£120,000,000 Development',
       headlineMetric: '£72M Pre-Sold Ahead of Completion',
-      image: '/src/assets/images/portfolio_london_mansion_1790518719175.jpg',
+      image: londonMansionImage,
       summary: 'Restoration and repositioning of 24 ultra-prime heritage residences for an institutional European fund seeking Middle Eastern and Asian private capital.',
       duration: '6 Months Campaign',
       metrics: [
@@ -81,7 +85,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
       location: "Billionaires' Row, Manhattan, NY",
       valuation: '$85,000,000 Trophy Floor',
       headlineMetric: '$28M Week-One Contract Signed',
-      image: '/src/assets/images/portfolio_manhattan_tower_1790518732122.jpg',
+      image: manhattanTowerImage,
       summary: 'Double-height glass duplex penthouse high above Central Park, marketed through cinematic twilight drone production and Wall Street executive placements.',
       duration: '45 Days Execution',
       metrics: [
@@ -105,7 +109,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
       location: 'Bel Air & Beverly Hills, CA',
       valuation: '$28,500,000 Private Estate',
       headlineMetric: 'Record-Setting Neighborhood Close',
-      image: '/src/assets/images/portfolio_beverly_hills_villa_1790518743834.jpg',
+      image: beverlyHillsVillaImage,
       summary: 'Architectural cantilever masterpiece designed by a Pritzker-winning architect, sold to an international technology entrepreneur via hyper-targeted creative video.',
       duration: '60 Days on Market',
       metrics: [

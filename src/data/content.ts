@@ -4,6 +4,13 @@
  * Extensible projects array, interactive project pages data, stats, and company info.
  */
 
+import indigoWalkImage from '../assets/images/indigo_walk_commercial_1790698931457.jpg';
+import indigoAtriumImage from '../assets/images/indigo_walk_atrium_1790758568890.jpg';
+import madinaMallImage from '../assets/images/madina_mall_residency_1790698946982.jpg';
+import madinaResidencyImage from '../assets/images/madina_residency_suite_1790758590587.jpg';
+import manhattanTowerImage from '../assets/images/portfolio_manhattan_tower_1790518732122.jpg';
+import miamiPenthouseImage from '../assets/images/portfolio_miami_penthouse_1790518705507.jpg';
+
 export const COMPANY = {
   name: 'X Marketing',
   tagline: 'Real Estate Marketing That Sells',
@@ -100,8 +107,8 @@ export const FEATURED_PROJECTS: Project[] = [
     units: '4, 6 & 8 Marla Commercial Outlets & Executive Corporate Floors',
     startingPrice: 'PKR 1.85 Crore',
     installmentPlan: '3-Year Flexible Quarterly Plan (20% Down Payment)',
-    image: '/src/assets/images/indigo_walk_commercial_1790698931457.jpg',
-    heroImage: '/src/assets/images/indigo_walk_commercial_1790698931457.jpg',
+    image: indigoWalkImage,
+    heroImage: indigoWalkImage,
     description:
       'A master-crafted commercial promenade situated directly along the bustling Defence Road growth corridor. Built with monumental double-height glass facades, high footfall visibility, and basement parking for 250+ vehicles, Indigo Walk sets a new gold standard for commercial appreciation in Lahore.',
     highlights: [
@@ -121,22 +128,22 @@ export const FEATURED_PROJECTS: Project[] = [
     },
     gallery: [
       {
-        url: '/src/assets/images/indigo_walk_commercial_1790698931457.jpg',
+        url: indigoWalkImage,
         title: 'Exterior Architectural Perspective',
         caption: 'Monumental street-facing frontage designed for maximum commercial brand visibility.',
       },
       {
-        url: '/src/assets/images/indigo_walk_atrium_1790758568890.jpg',
+        url: indigoAtriumImage,
         title: 'Double-Height Retail Atrium',
         caption: 'Luminous pedestrian promenade engineered for premium international and national retail brands.',
       },
       {
-        url: '/src/assets/images/portfolio_manhattan_tower_1790518732122.jpg',
+        url: manhattanTowerImage,
         title: 'Executive Corporate Tower',
         caption: 'Refined corporate office floor plates featuring acoustic glass and private service cores.',
       },
       {
-        url: '/src/assets/images/portfolio_miami_penthouse_1790518705507.jpg',
+        url: miamiPenthouseImage,
         title: 'Rooftop Terrace & Hospitality Deck',
         caption: 'Panoramic open-air dining terrace with skyline views along Defence Road.',
       },
@@ -224,8 +231,8 @@ export const FEATURED_PROJECTS: Project[] = [
     units: '1 & 2 Bed Luxury Serviced Suites & Multi-Level Retail Outlets',
     startingPrice: 'PKR 45 Lakhs',
     installmentPlan: '4-Year Easy Installment Plan (15% Booking)',
-    image: '/src/assets/images/madina_mall_residency_1790698946982.jpg',
-    heroImage: '/src/assets/images/madina_mall_residency_1790698946982.jpg',
+    image: madinaMallImage,
+    heroImage: madinaMallImage,
     description:
       'A master-planned mixed-use landmark positioned at the entrance of Bahria Orchard Lahore. Combining a multi-story branded fashion and dining atrium with high-ceiling luxury serviced residences, Madina Mall & Residency redefines modern urban living in Lahore’s greenest community.',
     highlights: [
@@ -245,22 +252,22 @@ export const FEATURED_PROJECTS: Project[] = [
     },
     gallery: [
       {
-        url: '/src/assets/images/madina_mall_residency_1790698946982.jpg',
+        url: madinaMallImage,
         title: 'Main Boulevard Elevation',
         caption: 'Striking curvilinear facade with integrated LED media wall and central plaza.',
       },
       {
-        url: '/src/assets/images/madina_residency_suite_1790758590587.jpg',
+        url: madinaResidencyImage,
         title: 'Luxury Serviced Apartment Interior',
         caption: 'Designer suites featuring imported Italian stone, custom cabinetry, and panoramic balcony views.',
       },
       {
-        url: '/src/assets/images/indigo_walk_atrium_1790758568890.jpg',
+        url: indigoAtriumImage,
         title: 'Central Shopping Mall Atrium',
         caption: 'Climate-controlled multi-level retail experience with international dining and entertainment.',
       },
       {
-        url: '/src/assets/images/portfolio_miami_penthouse_1790518705507.jpg',
+        url: miamiPenthouseImage,
         title: 'Sky Lounge & Wellness Suite',
         caption: 'Rooftop infinity pool, fitness center, and private meeting suites for residents.',
       },

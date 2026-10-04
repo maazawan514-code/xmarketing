@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FEATURED_PROJECTS, Project, COMPANY } from '../data/content';
 import { MapPin, Building, ArrowUpRight, PhoneCall, Sparkles, Video } from 'lucide-react';
+import manhattanTowerImage from '../assets/images/portfolio_manhattan_tower_1790518732122.jpg';
 
 interface FeaturedProjectsProps {
   onSelectProject: (project: Project) => void;
@@ -28,7 +29,7 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
           loop
           muted
           playsInline
-          poster="/src/assets/images/portfolio_manhattan_tower_1790518732122.jpg"
+          poster={manhattanTowerImage}
           className="w-full h-full object-cover filter brightness-[0.25] contrast-125 scale-105 opacity-65"
         >
           <source

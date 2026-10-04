@@ -10,7 +10,7 @@ export const FloatingWhatsApp: React.FC = () => {
     <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
       {/* Tooltip Badge */}
       {showTooltip && (
-        <div className="hidden sm:flex items-center gap-2 py-2 px-3.5 rounded-full bg-[#111111]/95 border border-[#E10600]/40 text-xs text-neutral-200 shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-right duration-300">
+        <div className="flex items-center gap-2 py-2 px-3.5 rounded-full bg-[#111111]/95 border border-[#E10600]/40 text-xs text-neutral-200 shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-right duration-300">
           <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
           <span>Contact Us</span>
           <button

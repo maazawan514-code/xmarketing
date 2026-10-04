@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { COMPANY, FEATURED_PROJECTS } from '../data/content';
 import { SocialLinks } from './SocialLinks';
-import { Mail, Phone, MapPin, Send, CheckCircle2, Shield, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Shield } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 
 export const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -78,7 +79,7 @@ export const ContactSection: React.FC = () => {
                   className="flex items-center gap-4 p-4 rounded-2xl glass-card group hover:border-[#E10600]/50 transition-colors bg-[#111111]/80 border border-white/10"
                 >
                   <div className="w-12 h-12 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 flex items-center justify-center text-[#25D366] group-hover:scale-105 transition-transform">
-                    <MessageCircle className="w-5 h-5 fill-current" />
+                    <FaWhatsapp className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">WhatsApp Direct Desk</div>
@@ -147,7 +148,7 @@ export const ContactSection: React.FC = () => {
                     onClick={handleWhatsAppDirect}
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs uppercase tracking-wider transition-colors cursor-pointer"
                   >
-                    <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                    <FaWhatsapp className="w-4 h-4 text-[#25D366]" />
                     <span>Instant Follow-Up on WhatsApp</span>
                   </button>
                 </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { ArrowUpRight, MapPin, MessageCircle } from 'lucide-react';
+import { ArrowUpRight, MapPin } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { CONTACT_WHATSAPP, UPCOMING_PROJECTS } from '../data/upcomingProjects';
 
 const AmbientVideo: React.FC<{ src: string; poster: string; label: string }> = ({ src, poster, label }) => {
@@ -112,7 +113,7 @@ export const UpcomingProjects: React.FC = () => {
                   rel="noopener noreferrer"
                   className="inline-flex shrink-0 items-center justify-center gap-2 self-start bg-[#E10600] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[#FF2A2A] md:self-auto"
                 >
-                  <MessageCircle className="h-4 w-4" /> Enquire on WhatsApp
+                  <FaWhatsapp className="h-4 w-4" /> Enquire on WhatsApp
                 </a>
               </div>
 

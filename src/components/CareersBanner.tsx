@@ -1,6 +1,7 @@
 import React from 'react';
 import { COMPANY } from '../data/content';
-import { Briefcase, ArrowRight, MessageSquare, Sparkles } from 'lucide-react';
+import { Briefcase, ArrowRight, Sparkles } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 
 export const CareersBanner: React.FC = () => {
   const handleApplyWhatsApp = () => {
@@ -58,7 +59,7 @@ export const CareersBanner: React.FC = () => {
               onClick={handleApplyWhatsApp}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl red-gradient-bg hover:brightness-110 text-white font-bold text-sm uppercase tracking-wider transition-all duration-200 shadow-xl shadow-[#E10600]/30 hover:shadow-2xl hover:shadow-[#E10600]/50 cursor-pointer transform hover:-translate-y-0.5"
             >
-              <MessageSquare className="w-4 h-4" />
+              <FaWhatsapp className="w-4 h-4" />
               <span>Apply on WhatsApp</span>
               <ArrowRight className="w-4 h-4" />
             </button>

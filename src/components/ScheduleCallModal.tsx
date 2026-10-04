@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { COMPANY, FEATURED_PROJECTS, Project } from '../data/content';
-import { X, PhoneCall, Calendar, Clock, CheckCircle2, MessageCircle, ArrowRight } from 'lucide-react';
+import { X, PhoneCall, Calendar, Clock, CheckCircle2, ArrowRight } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { XLogo } from './XLogo';
 
 interface ScheduleCallModalProps {
@@ -79,7 +80,7 @@ export const ScheduleCallModal: React.FC<ScheduleCallModalProps> = ({
                 onClick={handleInstantWhatsApp}
                 className="w-full py-3.5 px-4 rounded-xl red-gradient-bg text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#E10600]/30 hover:shadow-xl hover:shadow-[#E10600]/50 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                <FaWhatsapp className="w-4 h-4 text-[#25D366]" />
                 <span>Confirm Instantly on WhatsApp</span>
               </button>
               <button

@@ -1,6 +1,7 @@
 import React from 'react';
 import { COMPANY } from '../data/content';
-import { Sparkles, MessageCircle, ShieldCheck } from 'lucide-react';
+import { Sparkles, ShieldCheck } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 
 interface CtaSectionProps {
   onRegisterInterest: () => void;
@@ -55,7 +56,7 @@ export const CtaSection: React.FC<CtaSectionProps> = ({ onRegisterInterest }) =>
             onClick={handleWhatsAppUs}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-white font-semibold text-sm uppercase tracking-wider border border-white/15 hover:border-[#E10600] transition-all duration-200 backdrop-blur-md cursor-pointer"
           >
-            <MessageCircle className="w-4 h-4 text-[#25D366]" />
+            <FaWhatsapp className="w-4 h-4 text-[#25D366]" />
             <span>WhatsApp Us</span>
             <span className="text-xs text-[#FF2A2A] font-mono">(Direct)</span>
           </button>

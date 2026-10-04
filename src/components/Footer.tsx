@@ -2,7 +2,8 @@ import React from 'react';
 import { XLogo } from './XLogo';
 import { SocialLinks } from './SocialLinks';
 import { COMPANY } from '../data/content';
-import { Phone, Mail, MapPin, MessageCircle, ArrowUp, Sparkles } from 'lucide-react';
+import { Phone, Mail, MapPin, ArrowUp, Sparkles } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 
 interface FooterProps {
   onRegisterInterest?: () => void;
@@ -81,7 +82,7 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterInterest, onNavigateHo
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 hover:border-[#E10600]/40 text-xs font-semibold text-white transition-colors"
               >
-                <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
+                <FaWhatsapp className="w-3.5 h-3.5 text-[#25D366]" />
                 <span>WhatsApp Desk: {COMPANY.whatsappDisplay}</span>
               </a>
 
@@ -149,7 +150,7 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterInterest, onNavigateHo
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
-                <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
+                <FaWhatsapp className="w-4 h-4 text-[#25D366] shrink-0" />
                 <a
                   href={COMPANY.whatsappUrl}
                   target="_blank"
@@ -171,13 +172,6 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterInterest, onNavigateHo
             <SocialLinks className="pt-4" />
           </div>
 
-        </div>
-
-        {/* 6) LEGAL FOOTER NOTE (small grey text) */}
-        <div className="py-6 border-b border-white/5 text-[11px] text-neutral-500 leading-relaxed font-mono">
-          <p>
-            {COMPANY.legalNotice}
-          </p>
         </div>
 
         {/* Bottom Bar */}

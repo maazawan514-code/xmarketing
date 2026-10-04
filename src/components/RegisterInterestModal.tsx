@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, ArrowRight, ArrowLeft, CheckCircle2, MessageSquare, ShieldCheck, Sparkles, Building2 } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, CheckCircle2, ShieldCheck, Sparkles, Building2 } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { COMPANY, FEATURED_PROJECTS } from '../data/content';
 import { XLogo } from './XLogo';
 
@@ -246,7 +247,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
                       value={formData.whatsappNumber}
                       onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
                       onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-                      placeholder="+92 321 995990"
+                      placeholder="+92321995990"
                       className="w-full px-4 py-3.5 rounded-xl bg-black/60 border border-white/15 text-white placeholder-neutral-500 text-base focus:outline-none focus:border-[#E10600] focus:ring-1 focus:ring-[#E10600] font-mono transition-colors"
                     />
                   </div>
@@ -469,7 +470,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
                 onClick={handleDirectWhatsAppClick}
                 className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:brightness-110 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#25D366]/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <MessageSquare className="w-4 h-4 fill-current" />
+                <FaWhatsapp className="w-4 h-4" />
                 <span>Chat on WhatsApp Now ({COMPANY.whatsappDisplay})</span>
               </button>
 

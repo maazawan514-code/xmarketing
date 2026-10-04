@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { COMPANY } from '../data/content';
-import { MessageCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export const FloatingWhatsApp: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState(true);
@@ -32,7 +33,7 @@ export const FloatingWhatsApp: React.FC = () => {
       >
         {/* Pulsing ring around button */}
         <span className="absolute inset-0 rounded-full border-2 border-[#25D366] opacity-75 animate-ping pointer-events-none" />
-        <MessageCircle className="w-7 h-7 fill-current relative z-10" />
+        <FaWhatsapp className="w-7 h-7 relative z-10" />
       </a>
     </div>
   );

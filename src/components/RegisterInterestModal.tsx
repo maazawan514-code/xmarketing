@@ -247,7 +247,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
                       value={formData.whatsappNumber}
                       onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
                       onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-                      placeholder="+92321995990"
+                      placeholder="+923219959990"
                       className="w-full px-4 py-3.5 rounded-xl bg-black/60 border border-white/15 text-white placeholder-neutral-500 text-base focus:outline-none focus:border-[#E10600] focus:ring-1 focus:ring-[#E10600] font-mono transition-colors"
                     />
                   </div>

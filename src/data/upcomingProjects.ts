@@ -3,7 +3,7 @@ import executiveApartmentImage from '../assets/images/madina_residency_suite_179
 import indigoWalkImage from '../assets/images/indigo_walk_commercial_1790698931457.jpg';
 import indigoAtriumImage from '../assets/images/indigo_walk_atrium_1790758568890.jpg';
 
-export const CONTACT_WHATSAPP = 'https://wa.me/92321995990';
+export const CONTACT_WHATSAPP = 'https://wa.me/923219959990';
 
 export interface UpcomingProject {
   id: string;

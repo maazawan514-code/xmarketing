@@ -12,7 +12,7 @@ export const FloatingWhatsApp: React.FC = () => {
       {showTooltip && (
         <div className="hidden sm:flex items-center gap-2 py-2 px-3.5 rounded-full bg-[#111111]/95 border border-[#E10600]/40 text-xs text-neutral-200 shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-right duration-300">
           <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
-          <span>Chat with Lahore Advisor</span>
+          <span>Contact Us</span>
           <button
             onClick={() => setShowTooltip(false)}
             className="text-neutral-500 hover:text-white ml-1 cursor-pointer"

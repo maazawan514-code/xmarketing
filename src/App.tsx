@@ -20,6 +20,7 @@ import { CtaSection } from './components/CtaSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
+import { Lightbox } from './components/Lightbox';
 import { RegisterInterestModal } from './components/RegisterInterestModal';
 import { ProjectPage } from './components/ProjectPage';
 import { FEATURED_PROJECTS, Project } from './data/content';
@@ -198,6 +199,8 @@ export default function App() {
 
         {/* FLOATING WHATSAPP BUTTON */}
         <FloatingWhatsApp />
+
+        <Lightbox />
 
         {/* MULTI-STEP "REGISTER INTEREST" MODAL */}
         <RegisterInterestModal

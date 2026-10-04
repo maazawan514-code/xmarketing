@@ -30,40 +30,11 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
   onBack,
   onRegisterInterest,
 }) => {
-  // Lightbox state
-  const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(null);
-
   // FAQ Accordion state (record of open FAQ indexes)
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex((prev) => (prev === index ? null : index));
-  };
-
-  const openLightbox = (index: number) => {
-    setActiveLightboxIndex(index);
-  };
-
-  const closeLightbox = () => {
-    setActiveLightboxIndex(null);
-  };
-
-  const prevLightboxImage = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (activeLightboxIndex !== null) {
-      setActiveLightboxIndex((prev) =>
-        prev === 0 ? project.gallery.length - 1 : (prev as number) - 1
-      );
-    }
-  };
-
-  const nextLightboxImage = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (activeLightboxIndex !== null) {
-      setActiveLightboxIndex((prev) =>
-        prev === project.gallery.length - 1 ? 0 : (prev as number) + 1
-      );
-    }
   };
 
   return (
@@ -328,12 +299,15 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
             {project.gallery.map((img, idx) => (
               <div
                 key={idx}
-                onClick={() => openLightbox(idx)}
                 className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-black border border-white/10 cursor-pointer shadow-lg hover:border-[#E10600]/60 transition-all duration-300"
               >
                 <img
                   src={img.url}
                   alt={img.title}
+                  data-lightbox
+                  data-lightbox-group={project.id}
+                  data-lightbox-title={img.title}
+                  data-lightbox-caption={img.caption}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
@@ -354,69 +328,6 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
           </div>
         </div>
 
-        {/* LIGHTBOX MODAL */}
-        {activeLightboxIndex !== null && (
-          <div
-            onClick={closeLightbox}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-in fade-in duration-200"
-          >
-            {/* Close Button */}
-            <button
-              type="button"
-              onClick={closeLightbox}
-              className="absolute top-5 right-5 w-11 h-11 rounded-full bg-white/10 hover:bg-[#E10600] text-white flex items-center justify-center transition-colors cursor-pointer z-30"
-              aria-label="Close Lightbox"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            {/* Prev Image */}
-            <button
-              type="button"
-              onClick={prevLightboxImage}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 hover:bg-[#E10600] border border-white/20 text-white flex items-center justify-center transition-colors cursor-pointer z-30"
-              aria-label="Previous Image"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-
-            {/* Next Image */}
-            <button
-              type="button"
-              onClick={nextLightboxImage}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/70 hover:bg-[#E10600] border border-white/20 text-white flex items-center justify-center transition-colors cursor-pointer z-30"
-              aria-label="Next Image"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-
-            {/* Main Lightbox Content */}
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="max-w-5xl w-full max-h-[85vh] flex flex-col items-center"
-            >
-              <div className="relative w-full aspect-[16/9] max-h-[70vh] rounded-2xl overflow-hidden bg-black shadow-2xl flex items-center justify-center">
-                <img
-                  src={project.gallery[activeLightboxIndex].url}
-                  alt={project.gallery[activeLightboxIndex].title}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-
-              <div className="w-full mt-4 text-center">
-                <div className="text-lg font-bold text-white font-heading">
-                  {project.gallery[activeLightboxIndex].title}
-                </div>
-                <p className="text-xs sm:text-sm text-neutral-300 mt-1 max-w-xl mx-auto">
-                  {project.gallery[activeLightboxIndex].caption}
-                </p>
-                <div className="text-[11px] font-mono text-[#FF2A2A] mt-2">
-                  Image {activeLightboxIndex + 1} of {project.gallery.length}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </section>
 
       {/* 5) LOCATION SECTION */}

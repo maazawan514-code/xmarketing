@@ -12,17 +12,17 @@ export const COMPANY = {
   address: 'Suite 402, Commercial Broadway, Defence Road / DHA Phase 8, Lahore, Pakistan',
   phoneDisplay: '0339-9999656',
   phoneRaw: '03399999656',
-  whatsappDisplay: '+44 788 250 0228',
-  whatsappRaw: '+447882500228',
-  whatsappUrl: 'https://wa.me/447882500228',
-  email: 'info@marketingofficial.com',
+  whatsappDisplay: '+92 321 995990',
+  whatsappRaw: '92321995990',
+  whatsappUrl: 'https://wa.me/92321995990',
+  email: 'info@xmarketingofficial.com',
   legalNotice:
     'Prices, plans, specifications and payment terms are subject to change without notice. Registration of interest does not constitute an offer, reservation or contract. Images are artist\'s impressions.',
   socials: {
     facebook: 'https://www.facebook.com/profile.php?id=61594671850030',
     instagram: 'https://www.instagram.com/_xmarketingofficial/',
     linkedin: 'https://www.linkedin.com/company/145269210/',
-    whatsapp: 'https://wa.me/92XXXXXXXXXX',
+    whatsapp: 'https://wa.me/92321995990',
   },
 };
 

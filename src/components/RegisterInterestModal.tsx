@@ -103,7 +103,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
   const handleSubmit = () => {
     setIsSubmitted(true);
 
-    // Prepare prefilled WhatsApp message to +447882500228
+    // Prepare a prefilled WhatsApp message for X Marketing.
     const msg = encodeURIComponent(
       `Hello X Marketing, I have registered my interest through the website.\n\n` +
       `• Project: ${formData.interestedIn}\n` +
@@ -114,7 +114,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
       `Please share exclusive pricing, payment schedule, and VIP booking documentation.`
     );
 
-    const waLink = `https://wa.me/447882500228?text=${msg}`;
+    const waLink = `https://wa.me/${COMPANY.whatsappRaw}?text=${msg}`;
 
     // Open WhatsApp in new tab automatically
     setTimeout(() => {
@@ -136,7 +136,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
       `• City / Country: ${formData.location}\n\n` +
       `Please share exclusive pricing, payment schedule, and VIP booking documentation.`
     );
-    window.open(`https://wa.me/447882500228?text=${msg}`, '_blank');
+    window.open(`https://wa.me/${COMPANY.whatsappRaw}?text=${msg}`, '_blank');
   };
 
   const handleResetAndClose = () => {
@@ -246,7 +246,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
                       value={formData.whatsappNumber}
                       onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
                       onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-                      placeholder="+44 7882 500228 or +92 300 1234567"
+                      placeholder="+92 321 995990"
                       className="w-full px-4 py-3.5 rounded-xl bg-black/60 border border-white/15 text-white placeholder-neutral-500 text-base focus:outline-none focus:border-[#E10600] focus:ring-1 focus:ring-[#E10600] font-mono transition-colors"
                     />
                   </div>
@@ -435,7 +435,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
         ) : (
           /* THANK YOU SCREEN AS SPECIFIED:
              "You're on the priority list. Our team will contact you on WhatsApp shortly."
-             Also open a prefilled WhatsApp message to +447882500228 with the entered details.
+             Also open a prefilled WhatsApp message with the entered details.
           */
           <div className="py-8 text-center animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 rounded-full bg-[#E10600]/20 text-[#FF2A2A] flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(225,6,0,0.4)]">

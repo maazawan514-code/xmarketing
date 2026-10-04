@@ -136,6 +136,10 @@ export const UpcomingProjects: React.FC = () => {
                       key={image.src}
                       src={image.src}
                       alt={image.alt}
+                      data-lightbox
+                      data-lightbox-group={project.id}
+                      data-lightbox-title={image.alt}
+                      data-lightbox-caption={project.tagline}
                       loading="lazy"
                       decoding="async"
                       className="aspect-[4/3] h-full w-full object-cover"

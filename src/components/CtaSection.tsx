@@ -12,7 +12,7 @@ export const CtaSection: React.FC<CtaSectionProps> = ({ onRegisterInterest }) =>
     const text = encodeURIComponent(
       `Hello X Marketing, I would like to explore available high-return investment opportunities in Lahore.`
     );
-    window.open(`${COMPANY.whatsappUrl}?text=${text}`, '_blank');
+    window.open(`${COMPANY.whatsappUrl}?text=${text}`, '_blank', 'noopener,noreferrer');
   };
 
   return (

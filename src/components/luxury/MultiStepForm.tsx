@@ -108,7 +108,7 @@ export const MultiStepForm: React.FC<MultiStepFormProps> = ({
      *   body: JSON.stringify(newSubmission),
      * });
      * Or forward to Zapier / Make / WhatsApp Webhook:
-     * window.open(`https://wa.me/41818375000?text=${encodeURIComponent(...)}`);
+     * window.open(`https://wa.me/923219959990?text=${encodeURIComponent(...)}`);
      * =========================================================================
      */
 

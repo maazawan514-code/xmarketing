@@ -26,7 +26,7 @@ export const COMPANY = {
   addressUrl: 'https://www.google.com/search?sca_esv=0bdd03951d38706d&sxsrf=APpeQnvnGXHUkMUhtLIbxkVIcYEYOPypkA:1791205944382&q=indigo+walk+-+a+premium+commercial+hub+lahore+address&ludocid=8687863664850442317&sa=X&sqi=2&ved=2ahUKEwjd4KKQ-qKXAxXjXqQEHe3TG24Q6BN6BAgjEAI',
   phoneDisplay: '+923399999656',
   phoneRaw: '923399999656',
-  whatsappDisplay: '+923219959990',
+  whatsappDisplay: '+92 321 9959990',
   whatsappRaw: '923219959990',
   whatsappUrl: 'https://wa.me/923219959990',
   email: 'info@xmarketingofficial.com',

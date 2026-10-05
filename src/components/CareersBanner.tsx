@@ -8,7 +8,7 @@ export const CareersBanner: React.FC = () => {
     const text = encodeURIComponent(
       `Hello X Marketing Careers Desk, I am interested in applying for a sales professional / real estate advisor role with your Lahore team. Here is my background:`
     );
-    window.open(`${COMPANY.whatsappUrl}?text=${text}`, '_blank');
+    window.open(`${COMPANY.whatsappUrl}?text=${text}`, '_blank', 'noopener,noreferrer');
   };
 
   return (

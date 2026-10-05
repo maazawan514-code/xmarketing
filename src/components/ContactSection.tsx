@@ -30,7 +30,7 @@ export const ContactSection: React.FC = () => {
     const text = encodeURIComponent(
       `Hello X Marketing, my name is ${formData.name || 'an investor'}. I am interested in ${formData.interestedProject}. Please connect with me.`
     );
-    window.open(`${COMPANY.whatsappUrl}?text=${text}`, '_blank');
+    window.open(`${COMPANY.whatsappUrl}?text=${text}`, '_blank', 'noopener,noreferrer');
   };
 
   return (

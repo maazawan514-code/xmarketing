@@ -39,7 +39,7 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({ className = '' }) => (
         target="_blank"
         rel="noopener noreferrer"
         aria-label={label}
-        className="flex h-11 w-11 items-center justify-center transition-transform duration-200 hover:scale-110"
+        className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all duration-200 hover:scale-110 hover:border-[#FF2A2A] hover:bg-[#E10600]"
       >
         {icon}
       </a>

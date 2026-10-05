@@ -120,7 +120,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
     // Open WhatsApp in new tab automatically
     setTimeout(() => {
       try {
-        window.open(waLink, '_blank');
+        window.open(waLink, '_blank', 'noopener,noreferrer');
       } catch {
         // Fallback if popup blocked
       }
@@ -137,7 +137,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
       `• City / Country: ${formData.location}\n\n` +
       `Please share project information and the next steps.`
     );
-    window.open(`https://wa.me/${COMPANY.whatsappRaw}?text=${msg}`, '_blank');
+    window.open(`${COMPANY.whatsappUrl}?text=${msg}`, '_blank', 'noopener,noreferrer');
   };
 
   const handleResetAndClose = () => {

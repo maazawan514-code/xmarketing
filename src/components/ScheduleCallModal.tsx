@@ -35,7 +35,7 @@ export const ScheduleCallModal: React.FC<ScheduleCallModalProps> = ({
     const text = encodeURIComponent(
       `Hello X Marketing, I would like to schedule a call regarding "${projectInterest}". My name is ${name || 'an investor'} and my phone is ${phone || ''}.`
     );
-    window.open(`${COMPANY.whatsappUrl}?text=${text}`, '_blank');
+    window.open(`${COMPANY.whatsappUrl}?text=${text}`, '_blank', 'noopener,noreferrer');
   };
 
   return (

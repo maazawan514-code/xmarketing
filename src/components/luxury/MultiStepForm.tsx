@@ -297,9 +297,9 @@ export const MultiStepForm: React.FC<MultiStepFormProps> = ({
                     onChange={(e) => setFormData({ ...formData, interestedIn: e.target.value })}
                     className="w-full px-5 py-4 bg-[#1d1503] border border-[#b8955a]/40 text-[#f5efe3] text-sm focus:outline-none focus:border-[#b8955a] font-sans transition-colors rounded-sm appearance-none cursor-pointer"
                   >
-                    <option value="1-Bedroom">1-Bedroom Residence (CHF 2,150,000+)</option>
-                    <option value="2-Bedroom">2-Bedroom Chalet Suite (CHF 3,650,000+)</option>
-                    <option value="3-Bedroom">3-Bedroom Estate Suite (CHF 5,400,000+)</option>
+                    <option value="1-Bedroom">1-Bedroom Residence (88 m² / 947 sq ft)</option>
+                    <option value="2-Bedroom">2-Bedroom Chalet Suite (142 m² / 1,528 sq ft)</option>
+                    <option value="3-Bedroom">3-Bedroom Estate Suite (215 m² / 2,314 sq ft)</option>
                     <option value="Penthouse">The Sovereign Sky Penthouse (Crown Collection)</option>
                     <option value="Advise me">Advise me (Bespoke Private Client Consultation)</option>
                   </select>

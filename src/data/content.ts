@@ -10,13 +10,20 @@ import madinaMallImage from '../assets/images/madina_mall_residency_179069894698
 import madinaResidencyImage from '../assets/images/madina_residency_suite_1790758590587.jpg';
 import manhattanTowerImage from '../assets/images/portfolio_manhattan_tower_1790518732122.jpg';
 import miamiPenthouseImage from '../assets/images/portfolio_miami_penthouse_1790518705507.jpg';
+import madinahExterior1 from '../assets/images/madinah-mall/madinah-mall-exterior-1.jpg';
+import madinahExterior2 from '../assets/images/madinah-mall/madinah-mall-exterior-2.jpg';
+import madinahExterior3 from '../assets/images/madinah-mall/madinah-mall-exterior-3.jpg';
+import madinahExterior4 from '../assets/images/madinah-mall/madinah-mall-exterior-4.jpg';
+import madinahGroundFloorPlan from '../assets/images/madinah-mall/madinah-mall-ground-floor-plan.jpg';
+import madinahFirstFloorPlan from '../assets/images/madinah-mall/madinah-mall-first-floor-plan.jpg';
 
 export const COMPANY = {
   name: 'X Marketing',
   tagline: 'Real Estate Marketing That Sells',
   subtitle: 'From the right project to the right investor. We turn leads into confirmed bookings.',
   location: 'Lahore, Pakistan',
-  address: 'Suite 402, Commercial Broadway, Defence Road / DHA Phase 8, Lahore, Pakistan',
+  address: 'Indigo Walk Corporate Office, Gate #2, Defence Rd, opp. DHA Rahber, National Police Foundation Housing Society, Muhafiz Town Phase 2, Muhafiz Town, Lahore',
+  addressUrl: 'https://www.google.com/search?sca_esv=0bdd03951d38706d&sxsrf=APpeQnvnGXHUkMUhtLIbxkVIcYEYOPypkA:1791205944382&q=indigo+walk+-+a+premium+commercial+hub+lahore+address&ludocid=8687863664850442317&sa=X&sqi=2&ved=2ahUKEwjd4KKQ-qKXAxXjXqQEHe3TG24Q6BN6BAgjEAI',
   phoneDisplay: '+923399999656',
   phoneRaw: '923399999656',
   whatsappDisplay: '+923219959990',
@@ -33,7 +40,7 @@ export const COMPANY = {
 
 export const TICKER_ITEMS = [
   'Verified Projects',
-  'Easy Installments',
+  'Curated Opportunities',
   'Dedicated Support',
   'Overseas Pakistani Desk',
   'Site Visits Arranged',
@@ -43,6 +50,8 @@ export interface ProjectGalleryItem {
   url: string;
   title: string;
   caption: string;
+  width?: number;
+  height?: number;
 }
 
 export interface ProjectChapter {
@@ -61,9 +70,7 @@ export interface ProjectFAQ {
 export interface ProjectKeyFacts {
   location: string;
   unitTypes: string;
-  paymentPlan: string;
   completion: string;
-  startingPrice: string;
   approvalStatus: string;
 }
 
@@ -82,15 +89,14 @@ export interface Project {
   location: string;
   landmark: string;
   units: string;
-  startingPrice: string;
-  installmentPlan: string;
   image: string;
   heroImage: string;
   description: string;
   highlights: string[];
-  status: 'Pre-Launch Booking' | 'Under Fast Construction' | 'Ready for Possession';
+  status: 'Pre-Launch' | 'Under Fast Construction' | 'Ready for Possession';
   keyFacts: ProjectKeyFacts;
   gallery: ProjectGalleryItem[];
+  floorPlans?: ProjectGalleryItem[];
   locationDetails: ProjectLocationDetails;
   chapters: ProjectChapter[];
   faqs: ProjectFAQ[];
@@ -105,8 +111,6 @@ export const FEATURED_PROJECTS: Project[] = [
     location: 'Defence Road, Lahore',
     landmark: 'Opposite DHA Rahbar Gate 2',
     units: '4, 6 & 8 Marla Commercial Outlets & Executive Corporate Floors',
-    startingPrice: 'PKR 1.85 Crore',
-    installmentPlan: '3-Year Flexible Quarterly Plan (20% Down Payment)',
     image: indigoWalkImage,
     heroImage: indigoWalkImage,
     description:
@@ -117,13 +121,11 @@ export const FEATURED_PROJECTS: Project[] = [
       'High-speed commercial elevators & 100% power backup',
       'Estimated 12-14% annual rental yield potential',
     ],
-    status: 'Pre-Launch Booking',
+    status: 'Pre-Launch',
     keyFacts: {
       location: 'Defence Road (Facing DHA Rahbar Gate 2), Lahore',
       unitTypes: 'Ground & Upper Retail Outlets, Corporate Executive Floors',
-      paymentPlan: '3-Year Flexible Quarterly Plan (20% Down Payment)',
       completion: 'Q4 2027 (On Schedule)',
-      startingPrice: 'PKR 1.85 Crore',
       approvalStatus: 'Fully Approved & Regulated Commercial Mandate',
     },
     gallery: [
@@ -190,7 +192,7 @@ export const FEATURED_PROJECTS: Project[] = [
         title: 'Capital Appreciation & Projected Rental Yields',
         subtitle: 'Institutional Cash Flow for Smart Capital',
         content:
-          'Commercial assets on active arterial roads in Lahore consistently outperform residential real estate in inflationary cycles. Indigo Walk offers an entry valuation benchmarked for rapid appreciation as surrounding infrastructure nears full occupancy, paired with projected net yields between 12% and 14% upon handover.',
+          'Commercial assets on active arterial roads in Lahore consistently outperform residential real estate in inflationary cycles. Indigo Walk is positioned for growth as surrounding infrastructure nears full occupancy, paired with projected net yields between 12% and 14% upon handover.',
         highlights: [
           'Pre-leased retail partnerships with leading brands',
           'Transparent, milestone-linked construction schedule',
@@ -199,11 +201,6 @@ export const FEATURED_PROJECTS: Project[] = [
       },
     ],
     faqs: [
-      {
-        question: 'What is the minimum booking amount for Indigo Walk?',
-        answer:
-          'Booking begins at a 20% down payment, with the remainder distributed over a flexible 3-year quarterly installment schedule. Custom corporate payment plans can be tailored on request.',
-      },
       {
         question: 'Is the project legally vetted and approved?',
         answer:
@@ -229,8 +226,6 @@ export const FEATURED_PROJECTS: Project[] = [
     location: 'Bahria Orchard, Lahore',
     landmark: 'Main Boulevard, Phase 1, Bahria Orchard',
     units: '1 & 2 Bed Luxury Serviced Suites & Multi-Level Retail Outlets',
-    startingPrice: 'PKR 45 Lakhs',
-    installmentPlan: '4-Year Easy Installment Plan (15% Booking)',
     image: madinaMallImage,
     heroImage: madinaMallImage,
     description:
@@ -245,31 +240,53 @@ export const FEATURED_PROJECTS: Project[] = [
     keyFacts: {
       location: 'Main Boulevard, Phase 1, Bahria Orchard, Lahore',
       unitTypes: '1 & 2 Bedroom Luxury Residences, Commercial Brand Outlets',
-      paymentPlan: '4-Year Easy Installment Plan (15% Booking)',
       completion: 'Q2 2027 (Under Active Construction)',
-      startingPrice: 'PKR 45 Lakhs',
       approvalStatus: 'Bahria Approved Master Plan with Clear Registry',
     },
     gallery: [
       {
-        url: madinaMallImage,
-        title: 'Main Boulevard Elevation',
-        caption: 'Striking curvilinear facade with integrated LED media wall and central plaza.',
+        url: madinahExterior1,
+        title: 'Madinah Mall exterior front view at sunset',
+        caption: 'Front elevation of Madinah Mall & Residency at sunset.',
+        width: 1211,
+        height: 768,
       },
       {
-        url: madinaResidencyImage,
-        title: 'Luxury Serviced Apartment Interior',
-        caption: 'Designer suites featuring imported Italian stone, custom cabinetry, and panoramic balcony views.',
+        url: madinahExterior2,
+        title: 'Madinah Mall angled exterior view at sunset',
+        caption: 'Angled corner view of the illuminated Madinah Mall facade.',
+        width: 1211,
+        height: 768,
       },
       {
-        url: indigoAtriumImage,
-        title: 'Central Shopping Mall Atrium',
-        caption: 'Climate-controlled multi-level retail experience with international dining and entertainment.',
+        url: madinahExterior3,
+        title: 'Madinah Mall side exterior view at sunset',
+        caption: 'Side view of Madinah Mall & Residency in the evening light.',
+        width: 1238,
+        height: 768,
       },
       {
-        url: miamiPenthouseImage,
-        title: 'Sky Lounge & Wellness Suite',
-        caption: 'Rooftop infinity pool, fitness center, and private meeting suites for residents.',
+        url: madinahExterior4,
+        title: 'Madinah Mall close front exterior view at sunset',
+        caption: 'Closer front view highlighting the building entrance and retail frontage.',
+        width: 1211,
+        height: 768,
+      },
+    ],
+    floorPlans: [
+      {
+        url: madinahGroundFloorPlan,
+        title: 'Madinah Mall ground floor plan',
+        caption: 'Ground floor layout.',
+        width: 1151,
+        height: 768,
+      },
+      {
+        url: madinahFirstFloorPlan,
+        title: 'Madinah Mall first floor plan',
+        caption: 'First floor layout.',
+        width: 1151,
+        height: 768,
       },
     ],
     locationDetails: {
@@ -311,23 +328,18 @@ export const FEATURED_PROJECTS: Project[] = [
       },
       {
         number: 'Chapter III',
-        title: 'Low Barrier to Entry with High Rental Demand',
-        subtitle: 'Affordable Capital Deployment from PKR 45 Lakhs',
+        title: 'Connected Retail & Serviced Living',
+        subtitle: 'Everyday Amenities for Residents',
         content:
-          'With units starting from just PKR 45 Lakhs and a 4-year milestone installment plan, Madina Mall & Residency presents one of the highest risk-adjusted yield profiles in South Lahore. The scarcity of hotel-grade serviced apartments in Bahria Orchard ensures occupancy rates remain exceptionally high year-round.',
+          'The development brings together serviced residences, multi-level retail outlets, dining, and rooftop leisure amenities. Residents can enjoy a swimming pool, wellness gym, private cinema, executive co-working club, and on-site housekeeping management.',
         highlights: [
-          '15% initial booking with simple monthly/quarterly tranches',
-          'Strong demand from visiting overseas families and doctors',
-          'Demonstrated 35%+ capital growth over construction phase',
+          'Studio, 1-bedroom, and 2-bedroom residence options',
+          'Multi-level branded retail outlets and dining spaces',
+          'Rooftop leisure amenities and residents lounge',
         ],
       },
     ],
     faqs: [
-      {
-        question: 'Are both cash and installment options available?',
-        answer:
-          'Yes. We offer special cash discount rebates for upfront payments, as well as our standard 4-year installment plan with low monthly installments.',
-      },
       {
         question: 'What types of apartments are available?',
         answer:
@@ -363,8 +375,8 @@ export const WHY_CHOOSE_US = [
     icon: 'FileCheck',
     title: 'Transparent Process',
     description:
-      'Zero hidden charges, direct-to-developer official pricing, and transparent milestone-based installment schedules. You receive all official payment receipts and allotment documentation directly.',
-    tag: 'Zero Hidden Fees',
+      'Verified project documentation and clear communication throughout your purchase journey. You receive official allotment documents directly.',
+    tag: 'Clear Documentation',
   },
   {
     icon: 'Headphones',
@@ -381,7 +393,7 @@ export const HOW_WE_WORK = [
     title: 'We Listen First',
     subtitle: 'Understanding Your Capital Goals',
     description:
-      'Whether you are an overseas Pakistani seeking safe high-yield rental returns or a local investor looking for rapid capital appreciation, we listen first to your budget, horizon, and installment comfort.',
+      'Whether you are an overseas Pakistani seeking safe high-yield rental returns or a local investor looking for rapid capital appreciation, we listen first to your priorities, investment horizon, and preferred property type.',
   },
   {
     step: '02',
@@ -392,10 +404,10 @@ export const HOW_WE_WORK = [
   },
   {
     step: '03',
-    title: 'Guided Till Booking & Beyond',
+    title: 'Guided Through Handover & Beyond',
     subtitle: 'Flawless Execution to Handover',
     description:
-      'From organizing VIP site tours and token submission to allotment transfer letters and after-sales rental yield management, X Marketing stays by your side throughout the investment lifecycle.',
+      'From organizing VIP site tours and verifying project documents to allotment transfer letters and after-sales rental yield management, X Marketing stays by your side throughout the investment lifecycle.',
   },
 ];
 
@@ -438,15 +450,15 @@ export const SERVICES = [
   },
   {
     icon: 'FileText',
-    title: 'Booking & Documentation',
+    title: 'Purchase & Documentation',
     description:
-      'Complete handling of booking files, official verification, allotment letters, payment receipt validation, and transfer documentation with complete peace of mind.',
+      'Complete handling of official verification, allotment letters, and transfer documentation with complete peace of mind.',
   },
   {
     icon: 'LifeBuoy',
     title: 'After-Sales Support',
     description:
-      'Our relationship does not end at booking. We assist with installment reminders, secondary market resale, tenant placement, and asset rental yield management.',
+      'Our relationship continues after handover. We assist with secondary market resale, tenant placement, and asset rental yield management.',
   },
 ];
 
@@ -468,7 +480,7 @@ export const TESTIMONIALS = [
     location: 'DHA Phase 5, Lahore',
     rating: 5,
     quote:
-      'X Marketing doesn’t just push whatever project pays the highest commission. They took the time to understand my cash flow and recommended Madina Mall & Residency in Bahria Orchard. The 4-year installment plan was exact, and construction pace is phenomenal.',
+      'X Marketing took the time to understand my priorities and recommended Madina Mall & Residency in Bahria Orchard. Their guidance was clear, and the construction pace is phenomenal.',
     project: 'Invested in Madina Mall & Residency',
   },
   {
@@ -478,7 +490,7 @@ export const TESTIMONIALS = [
     location: 'Gulberg III, Lahore',
     rating: 5,
     quote:
-      'The speed and professionalism of the X Marketing team is unmatched in Pakistan. They facilitated our corporate office booking in record time with zero hidden charges. Highly recommended for any serious real estate investor.',
+      'The speed and professionalism of the X Marketing team is unmatched in Pakistan. They helped us secure our corporate office in record time. Highly recommended for any serious real estate investor.',
     project: 'Commercial Portfolio Investor',
   },
 ];

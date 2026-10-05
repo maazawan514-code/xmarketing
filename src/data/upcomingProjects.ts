@@ -51,9 +51,8 @@ export const UPCOMING_PROJECTS: UpcomingProject[] = [
         ],
       },
       {
-        heading: 'Payment & utilities',
+        heading: 'Utilities',
         items: [
-          'Installment plan over 3-4 years. Contact X Marketing for latest details on price and payment plan.',
           'WAPDA electricity; own arrangement planned in future.',
           'Metered water. Gas is not available.',
         ],
@@ -92,9 +91,8 @@ export const UPCOMING_PROJECTS: UpcomingProject[] = [
         ],
       },
       {
-        heading: 'Payment & utilities',
+        heading: 'Residence features',
         items: [
-          '4-year easy installment plan with 15% booking.',
           'High-demand location with rapid occupancy potential.',
           'Ideal for family living and investor yield generation.',
         ],

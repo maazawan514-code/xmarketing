@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Project, ProjectGalleryItem } from '../data/content';
+import { COMPANY, Project } from '../data/content';
 import {
   ArrowLeft,
   MapPin,
   Building,
   Calendar,
-  CreditCard,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
@@ -18,6 +17,7 @@ import {
   Clock,
   Navigation,
 } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 
 interface ProjectPageProps {
   project: Project;
@@ -36,6 +36,9 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
   const toggleFaq = (index: number) => {
     setOpenFaqIndex((prev) => (prev === index ? null : index));
   };
+  const whatsappUrl = `${COMPANY.whatsappUrl}?text=${encodeURIComponent(
+    `Hello, I would like more information about ${project.name}.`
+  )}`;
 
   return (
     <div className="min-h-screen bg-[#000000] text-[#A3A3A3] pt-20 animate-in fade-in duration-300">
@@ -105,10 +108,6 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
               <MapPin className="w-4 h-4 text-[#E10600]" />
               <span>{project.location} ({project.landmark})</span>
             </div>
-            <span className="hidden sm:inline text-neutral-600">•</span>
-            <div className="text-[#FF2A2A] font-mono font-bold">
-              Starting from {project.keyFacts.startingPrice}
-            </div>
           </div>
         </div>
 
@@ -116,10 +115,10 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E10600] to-transparent" />
       </section>
 
-      {/* 2) KEY FACTS ROW (Location, Unit Types, Payment Plan, Completion) */}
+      {/* 2) KEY FACTS ROW (Location, Unit Types, Completion) */}
       <section className="relative z-20 -mt-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#111111]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
             {/* Fact 1: Location */}
             <div className="flex items-start gap-4 px-2 pt-4 sm:pt-0">
               <div className="w-11 h-11 rounded-xl bg-[#E10600]/15 border border-[#E10600]/30 flex items-center justify-center text-[#FF2A2A] shrink-0">
@@ -150,22 +149,7 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
               </div>
             </div>
 
-            {/* Fact 3: Payment Plan */}
-            <div className="flex items-start gap-4 px-2 pt-4 sm:pt-0 sm:pl-6">
-              <div className="w-11 h-11 rounded-xl bg-[#E10600]/15 border border-[#E10600]/30 flex items-center justify-center text-[#FF2A2A] shrink-0">
-                <CreditCard className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-neutral-400 font-mono block">
-                  Payment Plan
-                </span>
-                <span className="text-sm font-bold text-white font-heading mt-0.5 block leading-snug">
-                  {project.keyFacts.paymentPlan}
-                </span>
-              </div>
-            </div>
-
-            {/* Fact 4: Completion */}
+            {/* Fact 3: Completion */}
             <div className="flex items-start gap-4 px-2 pt-4 sm:pt-0 sm:pl-6">
               <div className="w-11 h-11 rounded-xl bg-[#E10600]/15 border border-[#E10600]/30 flex items-center justify-center text-[#FF2A2A] shrink-0">
                 <Calendar className="w-5 h-5" />
@@ -243,24 +227,16 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
           {/* Quick Stats Box & Advisor Callout */}
           <div className="lg:col-span-5 bg-[#111111] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
             <div className="border-b border-white/10 pb-4">
-              <span className="text-xs uppercase font-mono text-neutral-400">Allotment Status</span>
+              <span className="text-xs uppercase font-mono text-neutral-400">Project Status</span>
               <div className="text-2xl font-bold text-white font-heading mt-1">
-                Direct Official Developer Mandate
+                {project.status}
               </div>
               <p className="text-xs text-neutral-400 mt-1">
-                Zero agent markups or arbitrary transfer premiums. All bookings executed with official receipts.
+                {project.keyFacts.approvalStatus}
               </p>
             </div>
 
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs py-2 border-b border-white/5">
-                <span className="text-neutral-400">Starting Price</span>
-                <span className="text-white font-mono font-bold">{project.keyFacts.startingPrice}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs py-2 border-b border-white/5">
-                <span className="text-neutral-400">Tenure</span>
-                <span className="text-white font-mono">{project.keyFacts.paymentPlan.split('(')[0]}</span>
-              </div>
               <div className="flex items-center justify-between text-xs py-2 border-b border-white/5">
                 <span className="text-neutral-400">Target Delivery</span>
                 <span className="text-[#FF2A2A] font-mono font-bold">{project.keyFacts.completion}</span>
@@ -272,7 +248,7 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
               onClick={() => onRegisterInterest(project)}
               className="w-full py-4 rounded-xl red-gradient-bg hover:brightness-110 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#E10600]/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Request Brochure & Pricing Sheet</span>
+              <span>Register Interest</span>
             </button>
           </div>
         </div>
@@ -288,14 +264,14 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-heading">
-              Project <span className="red-gradient-text">Gallery</span>
+              <span className="red-gradient-text">Gallery</span>
             </h2>
             <p className="mt-3 text-sm text-[#A3A3A3]">
               Click any render or photograph to open the high-resolution lightbox viewer.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {project.gallery.map((img, idx) => (
               <div
                 key={idx}
@@ -304,15 +280,22 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
                 <img
                   src={img.url}
                   alt={img.title}
+                  width={img.width}
+                  height={img.height}
+                  loading="lazy"
+                  decoding="async"
                   data-lightbox
-                  data-lightbox-group={project.id}
+                  data-lightbox-group={`${project.id}-gallery`}
                   data-lightbox-title={img.title}
                   data-lightbox-caption={img.caption}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open image: ${img.title}`}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
 
-                <div className="absolute bottom-4 left-4 right-4 text-left">
+                <div className="pointer-events-none absolute bottom-4 left-4 right-4 text-left">
                   <span className="text-[10px] font-mono font-semibold text-[#FF2A2A] block uppercase">
                     0{idx + 1} // VIEW
                   </span>
@@ -326,9 +309,98 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
               </div>
             ))}
           </div>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => onRegisterInterest(project)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl red-gradient-bg px-6 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-[#E10600]/30 transition-all hover:brightness-110"
+            >
+              <PhoneCall className="h-4 w-4" />
+              Register Interest
+            </button>
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.05] px-6 py-3 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:border-[#25D366]/60 hover:bg-white/10"
+            >
+              <FaWhatsapp className="h-4 w-4 text-[#25D366]" />
+              Enquire on WhatsApp
+            </a>
+          </div>
         </div>
 
       </section>
+
+      {project.floorPlans && project.floorPlans.length > 0 && (
+        <section className="border-t border-white/5 bg-[#0A0A0A] py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto mb-14 max-w-3xl text-center">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#E10600]/30 bg-white/[0.04] px-3.5 py-1.5">
+                <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[#FF2A2A]">
+                  Layouts
+                </span>
+              </div>
+              <h2 className="font-heading text-3xl font-extrabold text-white sm:text-4xl">
+                Floor <span className="red-gradient-text">Plans</span>
+              </h2>
+              <p className="mt-3 text-sm text-[#A3A3A3]">
+                Explore the ground and first floor layouts. Open either plan to zoom in.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {project.floorPlans.map((plan) => (
+                <figure
+                  key={plan.title}
+                  className="group overflow-hidden rounded-2xl border border-white/10 bg-black shadow-lg transition-all duration-300 hover:border-[#E10600]/60"
+                >
+                  <img
+                    src={plan.url}
+                    alt={plan.title}
+                    width={plan.width}
+                    height={plan.height}
+                    loading="lazy"
+                    decoding="async"
+                    data-lightbox
+                    data-lightbox-group={`${project.id}-floor-plans`}
+                    data-lightbox-title={plan.title}
+                    data-lightbox-caption={plan.caption}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Open image: ${plan.title}`}
+                    className="h-auto w-full cursor-zoom-in object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                  <figcaption className="border-t border-white/10 px-5 py-4 text-sm font-semibold text-white">
+                    {plan.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => onRegisterInterest(project)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl red-gradient-bg px-6 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-[#E10600]/30 transition-all hover:brightness-110"
+              >
+                <PhoneCall className="h-4 w-4" />
+                Register Interest
+              </button>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.05] px-6 py-3 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:border-[#25D366]/60 hover:bg-white/10"
+              >
+                <FaWhatsapp className="h-4 w-4 text-[#25D366]" />
+                Enquire on WhatsApp
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 5) LOCATION SECTION */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5">
@@ -496,7 +568,7 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
             Frequently Asked <span className="red-gradient-text">Questions</span>
           </h2>
           <p className="mt-3 text-sm text-[#A3A3A3]">
-            Key legal, booking, and installment details for prospective investors.
+            Key legal, project, and location details for prospective investors.
           </p>
         </div>
 
@@ -546,7 +618,7 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
           </h2>
 
           <p className="mt-4 text-base text-neutral-300 leading-relaxed">
-            Direct developer booking with verified inventory and flexible milestone installments. Register your interest now to access pre-launch rates.
+            Explore the project’s location, amenities, and development details. Register your interest to speak with our team.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">

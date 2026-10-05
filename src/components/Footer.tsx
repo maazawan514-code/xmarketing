@@ -141,7 +141,14 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterInterest, onNavigateHo
             <div className="space-y-2.5 text-xs text-[#A3A3A3]">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#E10600] shrink-0 mt-0.5" />
-                <span>{COMPANY.address}</span>
+                <a
+                  href={COMPANY.addressUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  {COMPANY.address}
+                </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-[#E10600] shrink-0" />

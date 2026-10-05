@@ -12,9 +12,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenGetStarted }) 
     {
       index: '01',
       title: 'Architectural Narrative & Legacy Branding',
-      desc: 'We position ultra-luxury real estate developments not merely as physical properties, but as rare cultural assets that command a valuation premium.',
-      stat: '+34%',
-      statLabel: 'Average Price Premium Achieved',
+      desc: 'We position ultra-luxury real estate developments not merely as physical properties, but as rare cultural assets with a distinctive identity.',
+      stat: '3D',
+      statLabel: 'Architectural Visualizations',
     },
     {
       index: '02',
@@ -33,10 +33,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenGetStarted }) 
   ];
 
   const globalMarkets = [
-    { city: 'New York', focus: 'Billionaires Row & Tribeca Penthouses', volume: '$620M+' },
-    { city: 'Miami', focus: 'Boutique Waterfront Towers & Star Island', volume: '$480M+' },
-    { city: 'London', focus: 'Mayfair & Belgravia Prime Estates', volume: '£350M+' },
-    { city: 'Dubai', focus: 'Palm Jumeirah & Downtown Sky Mansions', volume: '$390M+' },
+    { city: 'New York', focus: 'Billionaires Row & Tribeca Penthouses' },
+    { city: 'Miami', focus: 'Boutique Waterfront Towers & Star Island' },
+    { city: 'London', focus: 'Mayfair & Belgravia Prime Estates' },
+    { city: 'Dubai', focus: 'Palm Jumeirah & Downtown Sky Mansions' },
   ];
 
   return (
@@ -223,17 +223,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenGetStarted }) 
                     Active
                   </span>
                 </div>
-                <p className="text-xs text-neutral-400 mb-6 leading-relaxed">
+                <p className="text-xs text-neutral-400 leading-relaxed">
                   {market.focus}
                 </p>
-                <div className="pt-4 border-t border-neutral-800">
-                  <div className="text-xl font-extrabold text-white tabular-nums">
-                    {market.volume}
-                  </div>
-                  <div className="text-[11px] text-neutral-400 uppercase tracking-wider mt-0.5">
-                    Volume Closed
-                  </div>
-                </div>
               </div>
             ))}
           </div>

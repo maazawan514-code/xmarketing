@@ -102,15 +102,20 @@ export const ContactSection: React.FC = () => {
                 </a>
 
                 {/* Office */}
-                <div className="flex items-center gap-4 p-4 rounded-2xl glass-card bg-[#111111]/80 border border-white/10">
+                <a
+                  href={COMPANY.addressUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 p-4 rounded-2xl glass-card bg-[#111111]/80 border border-white/10 hover:border-[#E10600]/50 transition-colors"
+                >
                   <div className="w-12 h-12 rounded-xl bg-[#E10600]/15 border border-[#E10600]/30 flex items-center justify-center text-[#FF2A2A] shrink-0">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">Lahore Head Office</div>
-                    <div className="text-xs sm:text-sm text-neutral-200 mt-0.5 leading-snug">{COMPANY.address}</div>
+                    <span className="text-xs sm:text-sm text-neutral-200 mt-0.5 leading-snug">{COMPANY.address}</span>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
 
@@ -225,7 +230,7 @@ export const ContactSection: React.FC = () => {
                       rows={3}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Describe your budget, timeline, or preferred installment tenure..."
+                      placeholder="Describe your project interest, timeline, or preferred unit type..."
                       className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/10 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#E10600] focus:ring-1 focus:ring-[#E10600] transition-colors resize-none"
                     />
                   </div>

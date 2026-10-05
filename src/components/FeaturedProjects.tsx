@@ -100,6 +100,13 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                   <img
                     src={project.image}
                     alt={project.name}
+                    data-lightbox
+                    data-lightbox-group="featured-projects"
+                    data-lightbox-title={project.name}
+                    data-lightbox-caption={project.description}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Open image: ${project.name}`}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-black/25 to-transparent" />
@@ -116,13 +123,6 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                     </span>
                   </div>
 
-                  {/* Starting Price Overlay on Image Bottom Right */}
-                  <div className="absolute bottom-4 right-4 bg-black/90 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-[#E10600]/40">
-                    <div className="text-[10px] uppercase tracking-wider text-[#A3A3A3] font-medium">Starting From</div>
-                    <div className="text-sm sm:text-base font-extrabold text-[#FF2A2A] font-mono">
-                      {project.startingPrice}
-                    </div>
-                  </div>
                 </div>
 
                 {/* Project Body Info */}
@@ -147,15 +147,9 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                   </p>
 
                   {/* Quick specs pill */}
-                  <div className="mt-5 p-3 rounded-xl bg-white/[0.03] border border-white/5 text-xs text-[#A3A3A3] flex items-center justify-between">
-                    <div>
-                      <span className="text-neutral-500 uppercase text-[10px] tracking-wider block">Units</span>
-                      <span className="font-medium text-white">{project.units}</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-neutral-500 uppercase text-[10px] tracking-wider block">Payment</span>
-                      <span className="font-medium text-white">{project.installmentPlan.split('(')[0]}</span>
-                    </div>
+                  <div className="mt-5 rounded-xl border border-white/5 bg-white/[0.03] p-3 text-xs text-[#A3A3A3]">
+                    <span className="text-[10px] uppercase tracking-wider text-neutral-500">Units</span>
+                    <span className="mt-1 block font-medium text-white">{project.units}</span>
                   </div>
                 </div>
               </div>

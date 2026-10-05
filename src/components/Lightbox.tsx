@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import './Lightbox.css';
 
 type LightboxImage = {
   src: string;
-  alt?: string;
-  title?: string;
-  caption?: string;
+  alt: string;
+  title: string;
+  caption: string;
 };
 
 type ZoomState = {
@@ -13,196 +15,233 @@ type ZoomState = {
   y: number;
 };
 
+type Point = {
+  x: number;
+  y: number;
+};
+
+type PinchState = {
+  distance: number;
+  scale: number;
+  x: number;
+  y: number;
+  center: Point;
+};
+
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 4;
 
 const CloseIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" className="h-6 w-6">
-    <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="m6 6 12 12M18 6 6 18" />
   </svg>
 );
 
-const ChevronLeftIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" className="h-6 w-6">
-    <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" />
+const PreviousIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="m15 5-7 7 7 7" />
   </svg>
 );
 
-const ChevronRightIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" className="h-6 w-6">
-    <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" />
+const NextIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="m9 5 7 7-7 7" />
   </svg>
 );
 
 const ZoomIcon = ({ zoomed }: { zoomed: boolean }) => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" className="h-5 w-5">
-    {zoomed ? (
-      <path d="M11 4.75a6.25 6.25 0 015.01 10.68L19.25 19l-1.06 1.06-3.24-3.24A6.25 6.25 0 1111 4.75zm0 2.5a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5zm-1.25 2.5h2.5v2.5h-2.5z" fill="currentColor" />
-    ) : (
-      <path d="M10.75 3.75a7 7 0 015.56 11.95l3.44 3.45 1.06-1.06-3.45-3.44A7 7 0 1110.75 3.75zm0 2a5 5 0 100 10 5 5 0 000-10zm2 2.25h-4v2h4v4h2v-4h4v-2h-4v-4h-2v4z" fill="currentColor" />
-    )}
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <circle cx="10.8" cy="10.8" r="6.8" />
+    <path d="m16 16 5 5M7.8 10.8h6" />
+    {!zoomed && <path d="M10.8 7.8v6" />}
   </svg>
 );
 
 export const Lightbox: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [items, setItems] = useState<LightboxImage[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [zoom, setZoom] = useState<ZoomState>({ scale: 1, x: 0, y: 0 });
+  const [zoom, setZoom] = useState<ZoomState>({ scale: MIN_ZOOM, x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const [didMove, setDidMove] = useState(false);
-  const [isMobilePinching, setIsMobilePinching] = useState(false);
-
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-  const stageRef = useRef<HTMLDivElement | null>(null);
-  const lastFocusedElementRef = useRef<HTMLElement | null>(null);
-  const dragRef = useRef({ startX: 0, startY: 0, originX: 0, originY: 0 });
-  const pinchRef = useRef<{ distance: number; scale: number } | null>(null);
-  const swipeStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
+  const [isPinching, setIsPinching] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLImageElement>(null);
+  const dragRef = useRef({ pointerId: -1, startX: 0, startY: 0, originX: 0, originY: 0 });
+  const pointersRef = useRef(new Map<number, Point>());
+  const pinchRef = useRef<PinchState | null>(null);
+  const swipeRef = useRef<{ pointerId: number; start: Point; moved: boolean } | null>(null);
+  const didDragRef = useRef(false);
   const lastTapRef = useRef(0);
+  const lastTouchRef = useRef(0);
 
-  const resetZoom = useCallback(() => {
-    setZoom({ scale: 1, x: 0, y: 0 });
-  }, []);
+  const isOpen = items.length > 0;
+  const currentImage = items[currentIndex] ?? null;
 
-  const clampPan = useCallback((nextScale: number, nextX: number, nextY: number) => {
+  const getPanLimits = useCallback((scale: number) => {
     const stage = stageRef.current;
-    if (!stage) return { x: nextX, y: nextY };
+    const image = stage?.querySelector('img');
+    if (!stage || !image || !image.naturalWidth || !image.naturalHeight) {
+      return { x: 0, y: 0 };
+    }
 
-    const maxX = (stage.clientWidth * (nextScale - 1)) / 2;
-    const maxY = (stage.clientHeight * (nextScale - 1)) / 2;
+    const maxImageWidth = Math.min(stage.clientWidth, 1600);
+    const maxImageHeight = Math.min(stage.clientHeight * 0.85, 900);
+    const fit = Math.min(maxImageWidth / image.naturalWidth, maxImageHeight / image.naturalHeight);
+    const width = image.naturalWidth * fit;
+    const height = image.naturalHeight * fit;
+
     return {
-      x: clamp(nextX, -maxX, maxX),
-      y: clamp(nextY, -maxY, maxY),
+      x: Math.max(0, (width * scale - stage.clientWidth) / 2),
+      y: Math.max(0, (height * scale - stage.clientHeight) / 2),
     };
   }, []);
 
+  const clampPan = useCallback((scale: number, x: number, y: number) => {
+    const limits = getPanLimits(scale);
+    return {
+      x: clamp(x, -limits.x, limits.x),
+      y: clamp(y, -limits.y, limits.y),
+    };
+  }, [getPanLimits]);
+
   const closeLightbox = useCallback(() => {
-    setIsOpen(false);
     setItems([]);
-    resetZoom();
+    setCurrentIndex(0);
+    setZoom({ scale: MIN_ZOOM, x: 0, y: 0 });
     setIsDragging(false);
-    setDidMove(false);
-    setIsMobilePinching(false);
-    if (lastFocusedElementRef.current) {
-      lastFocusedElementRef.current.focus();
-    }
-  }, [resetZoom]);
-
-  const updateZoom = useCallback(
-    (nextScale: number, originX?: number, originY?: number) => {
-      const constrained = clamp(nextScale, 1, 4);
-      setZoom((prev) => {
-        const base = { scale: constrained, x: prev.x, y: prev.y };
-        if (constrained <= 1 || typeof originX !== 'number' || typeof originY !== 'number') {
-          return { ...base, x: 0, y: 0 };
-        }
-
-        const stage = stageRef.current;
-        if (!stage) {
-          return base;
-        }
-
-        const xRatio = clamp((originX - stage.getBoundingClientRect().left) / stage.clientWidth, 0, 1);
-        const yRatio = clamp((originY - stage.getBoundingClientRect().top) / stage.clientHeight, 0, 1);
-        const nextX = (0.5 - xRatio) * stage.clientWidth * (constrained - 1);
-        const nextY = (0.5 - yRatio) * stage.clientHeight * (constrained - 1);
-        return { scale: constrained, ...clampPan(constrained, nextX, nextY) };
-      });
-    },
-    [clampPan]
-  );
-
-  const openLightbox = useCallback((trigger: HTMLImageElement) => {
-    const groupName = trigger.getAttribute('data-lightbox-group') || 'default';
-    const matched = Array.from(document.querySelectorAll<HTMLImageElement>('[data-lightbox]')).filter((img) => {
-      const itemGroup = img.getAttribute('data-lightbox-group') || 'default';
-      return itemGroup === groupName;
-    });
-
-    if (!matched.length) return;
-
-    const collection = matched.map((img) => ({
-      src: img.currentSrc || img.src,
-      alt: img.alt || '',
-      title: img.getAttribute('data-lightbox-title') || img.alt || '',
-      caption: img.getAttribute('data-lightbox-caption') || '',
-    }));
-
-    const index = matched.indexOf(trigger);
-    lastFocusedElementRef.current = trigger;
-    setItems(collection);
-    setCurrentIndex(index >= 0 ? index : 0);
-    setZoom({ scale: 1, x: 0, y: 0 });
-    setIsOpen(true);
+    setIsPinching(false);
+    pointersRef.current.clear();
+    pinchRef.current = null;
+    swipeRef.current = null;
   }, []);
 
+  const openLightbox = useCallback((trigger: HTMLImageElement) => {
+    const group = trigger.getAttribute('data-lightbox-group') || 'default';
+    const groupedImages = Array.from(document.querySelectorAll<HTMLImageElement>('img[data-lightbox]'))
+      .filter((image) => (image.getAttribute('data-lightbox-group') || 'default') === group);
+    const index = groupedImages.indexOf(trigger);
+
+    if (index < 0) return;
+
+    triggerRef.current = trigger;
+    setItems(groupedImages.map((image) => ({
+      src: image.currentSrc || image.src,
+      alt: image.alt || image.getAttribute('data-lightbox-title') || 'Image',
+      title: image.getAttribute('data-lightbox-title') || image.alt || 'Image',
+      caption: image.getAttribute('data-lightbox-caption') || '',
+    })));
+    setCurrentIndex(index);
+    setZoom({ scale: MIN_ZOOM, x: 0, y: 0 });
+  }, []);
+
+  const moveToIndex = useCallback((nextIndex: number) => {
+    if (!items.length) return;
+    setCurrentIndex((nextIndex + items.length) % items.length);
+    setZoom({ scale: MIN_ZOOM, x: 0, y: 0 });
+  }, [items.length]);
+
+  const zoomAt = useCallback((nextScale: number, clientX?: number, clientY?: number) => {
+    const scale = clamp(nextScale, MIN_ZOOM, MAX_ZOOM);
+    if (scale === MIN_ZOOM) {
+      setZoom({ scale: MIN_ZOOM, x: 0, y: 0 });
+      return;
+    }
+
+    const stage = stageRef.current;
+    const rect = stage?.getBoundingClientRect();
+    setZoom((previous) => {
+      const pointX = rect && typeof clientX === 'number' ? clientX - rect.left - rect.width / 2 : 0;
+      const pointY = rect && typeof clientY === 'number' ? clientY - rect.top - rect.height / 2 : 0;
+      const ratio = scale / previous.scale;
+      return {
+        scale,
+        ...clampPan(
+          scale,
+          pointX - (pointX - previous.x) * ratio,
+          pointY - (pointY - previous.y) * ratio
+        ),
+      };
+    });
+  }, [clampPan]);
+
+  const toggleZoom = useCallback((clientX?: number, clientY?: number) => {
+    zoomAt(zoom.scale > MIN_ZOOM ? MIN_ZOOM : 2.5, clientX, clientY);
+  }, [zoom.scale, zoomAt]);
+
   useEffect(() => {
-    const onDocumentClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement | null;
-      const trigger = target?.closest('[data-lightbox]') as HTMLImageElement | null;
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const trigger = target.closest<HTMLImageElement>('img[data-lightbox]');
       if (!trigger) return;
+
       event.preventDefault();
+      event.stopPropagation();
       openLightbox(trigger);
     };
 
-    document.addEventListener('click', onDocumentClick);
-    return () => document.removeEventListener('click', onDocumentClick);
+    const handleTriggerKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const trigger = target.closest<HTMLImageElement>('img[data-lightbox]');
+      if (!trigger) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      openLightbox(trigger);
+    };
+
+    document.addEventListener('click', handleClick, true);
+    document.addEventListener('keydown', handleTriggerKeyDown, true);
+    return () => {
+      document.removeEventListener('click', handleClick, true);
+      document.removeEventListener('keydown', handleTriggerKeyDown, true);
+    };
   }, [openLightbox]);
 
   useEffect(() => {
     if (!isOpen) return;
 
-    const previousOverflow = document.body.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    overlayRef.current?.querySelector<HTMLButtonElement>('[data-lightbox-close]')?.focus();
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      if (triggerRef.current?.isConnected) triggerRef.current.focus();
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        event.preventDefault();
         closeLightbox();
-      }
-
-      if (event.key === 'ArrowLeft') {
+      } else if (event.key === 'ArrowLeft' && items.length > 1) {
         event.preventDefault();
-        setCurrentIndex((prev) => {
-          const next = prev === 0 ? items.length - 1 : prev - 1;
-          resetZoom();
-          return next;
-        });
-      }
-
-      if (event.key === 'ArrowRight') {
+        moveToIndex(currentIndex - 1);
+      } else if (event.key === 'ArrowRight' && items.length > 1) {
         event.preventDefault();
-        setCurrentIndex((prev) => {
-          const next = prev === items.length - 1 ? 0 : prev + 1;
-          resetZoom();
-          return next;
-        });
-      }
-
-      if (event.key === '+' || event.key === '=') {
+        moveToIndex(currentIndex + 1);
+      } else if (event.key === '+' || event.key === '=') {
         event.preventDefault();
-        setZoom((prev) => ({ ...clampPan(Math.min(4, prev.scale + 0.25), prev.x, prev.y), scale: clamp(prev.scale + 0.25, 1, 4), x: prev.x, y: prev.y }));
-      }
-
-      if (event.key === '-' || event.key === '_') {
+        zoomAt(zoom.scale + 0.25);
+      } else if (event.key === '-' || event.key === '_') {
         event.preventDefault();
-        setZoom((prev) => {
-          const nextScale = clamp(prev.scale - 0.25, 1, 4);
-          return { scale: nextScale, ...clampPan(nextScale, prev.x, prev.y) };
-        });
-      }
-
-      if (event.key === 'Tab' && overlayRef.current) {
-        const focusable = Array.from(
-          overlayRef.current.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
-        ).filter((element) => !element.hasAttribute('disabled'));
-        if (!focusable.length) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
+        zoomAt(zoom.scale - 0.25);
+      } else if (event.key === 'Tab') {
+        const buttons = overlayRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)');
+        if (!buttons?.length) return;
+        const first = buttons[0];
+        const last = buttons[buttons.length - 1];
         if (event.shiftKey && document.activeElement === first) {
           event.preventDefault();
           last.focus();
-        }
-        if (!event.shiftKey && document.activeElement === last) {
+        } else if (!event.shiftKey && document.activeElement === last) {
           event.preventDefault();
           first.focus();
         }
@@ -210,484 +249,246 @@ export const Lightbox: React.FC = () => {
     };
 
     document.addEventListener('keydown', handleKeyDown);
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = previousOverflow;
     };
-  }, [closeLightbox, items.length, isOpen, resetZoom, clampPan]);
+  }, [closeLightbox, currentIndex, isOpen, items.length, moveToIndex, zoom.scale, zoomAt]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const firstButton = overlayRef.current?.querySelector<HTMLButtonElement>('button');
-    firstButton?.focus();
-  }, [isOpen]);
-
-  const currentImage = items[currentIndex] ?? null;
-
-  const moveToIndex = useCallback(
-    (nextIndex: number) => {
-      if (!items.length) return;
-      setCurrentIndex((nextIndex + items.length) % items.length);
-      resetZoom();
-    },
-    [items.length, resetZoom]
-  );
-
-  const handleBackgroundClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (event.target === event.currentTarget) {
-      closeLightbox();
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'touch') {
+      pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      lastTouchRef.current = Date.now();
+      if (pointersRef.current.size === 2) {
+        const [first, second] = Array.from(pointersRef.current.values());
+        pinchRef.current = {
+          distance: Math.hypot(first.x - second.x, first.y - second.y),
+          scale: zoom.scale,
+          x: zoom.x,
+          y: zoom.y,
+          center: {
+            x: (first.x + second.x) / 2,
+            y: (first.y + second.y) / 2,
+          },
+        };
+        swipeRef.current = null;
+        setIsDragging(false);
+        setIsPinching(true);
+      } else if (pointersRef.current.size === 1) {
+        swipeRef.current = {
+          pointerId: event.pointerId,
+          start: { x: event.clientX, y: event.clientY },
+          moved: false,
+        };
+      }
     }
-  };
 
-  const handleZoomToggle = useCallback(
-    (clientX?: number, clientY?: number) => {
-      const nextState = zoom.scale > 1 ? 1 : 2.5;
-      setZoom((prev) => {
-        if (prev.scale > 1) {
-          return { scale: 1, x: 0, y: 0 };
-        }
-
-        const stage = stageRef.current;
-        if (!stage || typeof clientX !== 'number' || typeof clientY !== 'number') {
-          return { scale: nextState, x: 0, y: 0 };
-        }
-
-        const rect = stage.getBoundingClientRect();
-        const xRatio = clamp((clientX - rect.left) / rect.width, 0, 1);
-        const yRatio = clamp((clientY - rect.top) / rect.height, 0, 1);
-        const nextX = (0.5 - xRatio) * rect.width * (nextState - 1);
-        const nextY = (0.5 - yRatio) * rect.height * (nextState - 1);
-        return { scale: nextState, ...clampPan(nextState, nextX, nextY) };
-      });
-    },
-    [clampPan, zoom.scale]
-  );
-
-  const handleWheelZoom = useCallback(
-    (event: React.WheelEvent<HTMLDivElement>) => {
+    if (zoom.scale > MIN_ZOOM && pointersRef.current.size < 2) {
       event.preventDefault();
-      const direction = event.deltaY < 0 ? 0.25 : -0.25;
-      setZoom((prev) => {
-        const next = clamp(prev.scale + direction, 1, 4);
-        if (next <= 1) return { scale: 1, x: 0, y: 0 };
-        return { scale: next, ...clampPan(next, prev.x, prev.y) };
-      });
-    },
-    [clampPan]
-  );
-
-  const handlePointerDown = useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      if (zoom.scale <= 1) return;
-      event.preventDefault();
-      setIsDragging(true);
-      setDidMove(false);
       dragRef.current = {
+        pointerId: event.pointerId,
         startX: event.clientX,
         startY: event.clientY,
         originX: zoom.x,
         originY: zoom.y,
       };
-    },
-    [zoom.scale, zoom.x, zoom.y]
-  );
+      didDragRef.current = false;
+      setIsDragging(true);
+    }
 
-  const handlePointerMove = useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      if (!isDragging || zoom.scale <= 1) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'touch' && pointersRef.current.has(event.pointerId)) {
+      pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    }
+
+    if (pinchRef.current && pointersRef.current.size >= 2) {
+      const [first, second] = Array.from(pointersRef.current.values());
+      const center = { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 };
+      const distance = Math.hypot(first.x - second.x, first.y - second.y);
+      const scale = clamp(
+        (pinchRef.current.scale * distance) / Math.max(pinchRef.current.distance, 1),
+        MIN_ZOOM,
+        MAX_ZOOM
+      );
+      const rect = stageRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const pointX = center.x - rect.left - rect.width / 2;
+      const pointY = center.y - rect.top - rect.height / 2;
+      const startPointX = pinchRef.current.center.x - rect.left - rect.width / 2;
+      const startPointY = pinchRef.current.center.y - rect.top - rect.height / 2;
+      const ratio = scale / pinchRef.current.scale;
+      setZoom({
+        scale,
+        ...clampPan(
+          scale,
+          pointX - (startPointX - pinchRef.current.x) * ratio,
+          pointY - (startPointY - pinchRef.current.y) * ratio
+        ),
+      });
+      setIsPinching(true);
+      return;
+    }
+
+    if (event.pointerId === dragRef.current.pointerId && isDragging) {
       const dx = event.clientX - dragRef.current.startX;
       const dy = event.clientY - dragRef.current.startY;
-      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
-        setDidMove(true);
-      }
-      setZoom((prev) => ({
-        scale: prev.scale,
-        ...clampPan(prev.scale, dragRef.current.originX + dx, dragRef.current.originY + dy),
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDragRef.current = true;
+      setZoom((previous) => ({
+        scale: previous.scale,
+        ...clampPan(previous.scale, dragRef.current.originX + dx, dragRef.current.originY + dy),
       }));
-    },
-    [clampPan, isDragging, zoom.scale]
-  );
-
-  const handlePointerUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  const handleImageClick = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      if (didMove) {
-        setDidMove(false);
-        return;
-      }
-      event.preventDefault();
-      handleZoomToggle(event.clientX, event.clientY);
-    },
-    [didMove, handleZoomToggle]
-  );
-
-  const handleTouchStart = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
-    if (event.touches.length === 2) {
-      const [a, b] = Array.from(event.touches);
-      const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-      pinchRef.current = { distance, scale: zoom.scale };
-      setIsMobilePinching(true);
       return;
     }
 
-    const touch = event.touches[0];
-    swipeStartRef.current = { x: touch.clientX, y: touch.clientY, time: Date.now() };
-
-    if (event.touches.length === 1 && zoom.scale > 1) {
-      setIsDragging(true);
-      dragRef.current = { startX: touch.clientX, startY: touch.clientY, originX: zoom.x, originY: zoom.y };
-      return;
+    if (event.pointerType === 'touch' && swipeRef.current?.pointerId === event.pointerId) {
+      const dx = event.clientX - swipeRef.current.start.x;
+      const dy = event.clientY - swipeRef.current.start.y;
+      if (Math.abs(dx) > 8 || Math.abs(dy) > 8) swipeRef.current.moved = true;
     }
+  };
 
-    if (event.touches.length === 1) {
-      const now = Date.now();
-      if (now - lastTapRef.current < 260) {
-        event.preventDefault();
-        handleZoomToggle(touch.clientX, touch.clientY);
-      }
-      lastTapRef.current = now;
-    }
-  }, [handleZoomToggle, zoom.scale, zoom.x, zoom.y]);
+  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'touch') {
+      pointersRef.current.delete(event.pointerId);
+      lastTouchRef.current = Date.now();
 
-  const handleTouchMove = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
-    if (event.touches.length === 2 && pinchRef.current) {
-      const [a, b] = Array.from(event.touches);
-      const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-      const nextScale = clamp((pinchRef.current.scale * distance) / pinchRef.current.distance, 1, 4);
-      setZoom((prev) => ({ scale: nextScale, ...clampPan(nextScale, prev.x, prev.y) }));
-      setIsMobilePinching(true);
-      return;
-    }
-
-    if (event.touches.length === 1 && isDragging && zoom.scale > 1) {
-      const touch = event.touches[0];
-      const dx = touch.clientX - dragRef.current.startX;
-      const dy = touch.clientY - dragRef.current.startY;
-      setZoom((prev) => ({
-        scale: prev.scale,
-        ...clampPan(prev.scale, dragRef.current.originX + dx, dragRef.current.originY + dy),
-      }));
-    }
-  }, [clampPan, isDragging, zoom.scale]);
-
-  const handleTouchEnd = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
-    if (event.changedTouches.length === 1 && !isMobilePinching && !isDragging) {
-      const touch = event.changedTouches[0];
-      const start = swipeStartRef.current;
-      if (start && zoom.scale <= 1) {
-        const deltaX = touch.clientX - start.x;
-        const deltaY = touch.clientY - start.y;
-        if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY)) {
-          moveToIndex(deltaX < 0 ? 1 : -1);
+      if (pinchRef.current) {
+        if (pointersRef.current.size < 2) {
+          pinchRef.current = null;
+          setIsPinching(false);
         }
+        swipeRef.current = null;
+      } else if (swipeRef.current?.pointerId === event.pointerId) {
+        const swipe = swipeRef.current;
+        const dx = event.clientX - swipe.start.x;
+        const dy = event.clientY - swipe.start.y;
+        if (zoom.scale === MIN_ZOOM && swipe.moved && Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) {
+          moveToIndex(dx < 0 ? currentIndex + 1 : currentIndex - 1);
+        } else if (!swipe.moved) {
+          const now = Date.now();
+          if (now - lastTapRef.current < 300) {
+            toggleZoom(event.clientX, event.clientY);
+            lastTapRef.current = 0;
+          } else {
+            lastTapRef.current = now;
+          }
+        }
+        swipeRef.current = null;
       }
     }
-    setIsDragging(false);
-    setIsMobilePinching(false);
-    swipeStartRef.current = null;
-    pinchRef.current = null;
-  }, [isDragging, isMobilePinching, moveToIndex, zoom.scale]);
 
-  if (!isOpen || !currentImage) {
-    return null;
-  }
+    if (event.pointerId === dragRef.current.pointerId) setIsDragging(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
 
-  return (
-    <>
-      <style>{`
-        .lightbox-overlay {
-          position: fixed;
-          inset: 0;
-          z-index: 2000;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 24px;
-          background: linear-gradient(180deg, rgba(230, 230, 230, 0.92), rgba(242, 242, 242, 0.96));
-          animation: lightbox-fade 0.2s ease-out;
-        }
+  const handleStageClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (Date.now() - lastTouchRef.current < 500) return;
+    if (didDragRef.current) {
+      didDragRef.current = false;
+      return;
+    }
+    toggleZoom(event.clientX, event.clientY);
+  };
 
-        .lightbox-panel {
-          position: relative;
-          width: min(90vw, 1200px);
-          height: min(85vh, 840px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
+  const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    zoomAt(zoom.scale + (event.deltaY < 0 ? 0.25 : -0.25), event.clientX, event.clientY);
+  };
 
-        .lightbox-stage {
-          position: relative;
-          width: min(100%, 1100px);
-          height: min(85vh, 780px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          border-radius: 24px;
-          background: rgba(255, 255, 255, 0.42);
-          box-shadow: 0 28px 80px rgba(0, 0, 0, 0.18);
-          user-select: none;
-          cursor: grab;
-        }
+  const handleBackgroundClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) closeLightbox();
+  };
 
-        .lightbox-stage.dragging {
-          cursor: grabbing;
-        }
+  if (!isOpen || !currentImage) return null;
 
-        .lightbox-image {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          pointer-events: none;
-          transition: transform 0.2s ease;
-          will-change: transform;
-          transform-origin: center center;
-        }
-
-        .lightbox-toolbar {
-          position: absolute;
-          inset: 0;
-          z-index: 20;
-          pointer-events: none;
-        }
-
-        .lightbox-button {
-          pointer-events: auto;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 56px;
-          height: 56px;
-          border: 0;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.9);
-          color: rgba(17, 17, 17, 0.8);
-          box-shadow: 0 12px 36px rgba(17, 17, 17, 0.14);
-          cursor: pointer;
-          transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .lightbox-button:hover,
-        .lightbox-button:focus-visible {
-          transform: scale(1.08);
-          background: rgba(255, 255, 255, 1);
-          box-shadow: 0 15px 42px rgba(17, 17, 17, 0.18);
-          outline: none;
-        }
-
-        .lightbox-close {
-          position: absolute;
-          top: 24px;
-          right: 24px;
-        }
-
-        .lightbox-arrow-left,
-        .lightbox-arrow-right {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          z-index: 10;
-        }
-
-        .lightbox-arrow-left {
-          left: 24px;
-        }
-
-        .lightbox-arrow-right {
-          right: 24px;
-        }
-
-        .lightbox-zoom {
-          position: absolute;
-          left: 24px;
-          bottom: 24px;
-        }
-
-        .lightbox-index {
-          position: absolute;
-          top: 24px;
-          left: 24px;
-          padding: 8px 12px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.88);
-          color: rgba(17, 17, 17, 0.8);
-          font-size: 0.72rem;
-          font-weight: 700;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          box-shadow: 0 10px 24px rgba(17, 17, 17, 0.12);
-        }
-
-        .lightbox-caption {
-          position: absolute;
-          left: 50%;
-          bottom: 14px;
-          transform: translateX(-50%);
-          max-width: min(70vw, 640px);
-          text-align: center;
-          color: rgba(17, 17, 17, 0.74);
-          font-size: 0.86rem;
-          line-height: 1.4;
-          background: rgba(255, 255, 255, 0.45);
-          border-radius: 999px;
-          padding: 10px 16px;
-          backdrop-filter: blur(8px);
-        }
-
-        .lightbox-hidden {
-          display: none;
-        }
-
-        @keyframes lightbox-fade {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @media (max-width: 640px) {
-          .lightbox-overlay {
-            padding: 18px;
-          }
-          .lightbox-panel {
-            width: min(94vw, 1200px);
-            height: min(88vh, 720px);
-          }
-          .lightbox-stage {
-            height: min(82vh, 620px);
-            border-radius: 18px;
-          }
-          .lightbox-button {
-            width: 44px;
-            height: 44px;
-          }
-          .lightbox-close {
-            top: 16px;
-            right: 16px;
-          }
-          .lightbox-arrow-left {
-            left: 16px;
-          }
-          .lightbox-arrow-right {
-            right: 16px;
-          }
-          .lightbox-zoom {
-            left: 16px;
-            bottom: 16px;
-          }
-          .lightbox-index {
-            top: 16px;
-            left: 16px;
-            padding: 7px 10px;
-            letter-spacing: 0.08em;
-          }
-          .lightbox-caption {
-            font-size: 0.72rem;
-            max-width: 78vw;
-            bottom: 10px;
-           }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .lightbox-overlay,
-          .lightbox-button,
-          .lightbox-image {
-            transition: none !important;
-            animation: none !important;
-          }
-        }
-      `}</style>
-
-      <div
-        ref={overlayRef}
-        className="lightbox-overlay"
-        onClick={handleBackgroundClick}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Image viewer"
-      >
-        <div className="lightbox-panel">
-          <div className="lightbox-toolbar">
-            <div className="lightbox-index" aria-live="polite">
-              {currentIndex + 1} / {items.length}
-            </div>
-
-            <button
-              type="button"
-              className="lightbox-button lightbox-close"
-              onClick={(event) => {
-                event.stopPropagation();
-                closeLightbox();
-              }}
-              aria-label="Close image viewer"
-            >
-              <CloseIcon />
-            </button>
-
-            <button
-              type="button"
-              className="lightbox-button lightbox-arrow-left"
-              onClick={() => moveToIndex(currentIndex - 1)}
-              aria-label="Previous image"
-            >
-              <ChevronLeftIcon />
-            </button>
-
-            <button
-              type="button"
-              className="lightbox-button lightbox-arrow-right"
-              onClick={() => moveToIndex(currentIndex + 1)}
-              aria-label="Next image"
-            >
-              <ChevronRightIcon />
-            </button>
-
-            <button
-              type="button"
-              className="lightbox-button lightbox-zoom"
-              onClick={() => handleZoomToggle()}
-              aria-label={zoom.scale > 1 ? 'Zoom out' : 'Zoom in'}
-            >
-              <ZoomIcon zoomed={zoom.scale > 1} />
-            </button>
-          </div>
-
-          <div
-            ref={stageRef}
-            className={`lightbox-stage ${isDragging ? 'dragging' : ''}`}
-            onClick={handleImageClick}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerUp}
-            onWheel={handleWheelZoom}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            aria-label={currentImage.alt || 'Selected project image'}
-          >
-            <img
-              src={currentImage.src}
-              alt={currentImage.alt || 'Selected project image'}
-              className="lightbox-image"
-              style={{
-                transform: `translate(${zoom.x}px, ${zoom.y}px) scale(${zoom.scale})`,
-                transition: isDragging ? 'none' : 'transform 0.2s ease',
-                cursor: zoom.scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
-              }}
-            />
-          </div>
-
-          {currentImage.caption && <div className="lightbox-caption">{currentImage.caption}</div>}
+  return createPortal(
+    <div
+      ref={overlayRef}
+      className="lightbox-overlay"
+      onClick={handleBackgroundClick}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Full-screen image viewer"
+      tabIndex={-1}
+    >
+      <div className="lightbox-stage-area">
+        <div
+          ref={stageRef}
+          className={`lightbox-stage${zoom.scale > MIN_ZOOM ? ' is-zoomed' : ''}${isDragging || isPinching ? ' is-dragging' : ''}`}
+          onClick={handleStageClick}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          onWheel={handleWheel}
+          aria-label={currentImage.alt}
+        >
+          <img
+            key={currentImage.src}
+            className="lightbox-image"
+            src={currentImage.src}
+            alt={currentImage.alt}
+            draggable={false}
+            style={{
+              transform: `translate3d(${zoom.x}px, ${zoom.y}px, 0) scale(${zoom.scale})`,
+            }}
+          />
         </div>
+        {currentImage.caption && (
+          <p className="lightbox-caption" aria-live="polite">
+            {currentImage.caption}
+          </p>
+        )}
       </div>
-    </>
+
+      <div className="lightbox-counter" aria-live="polite">
+        {currentIndex + 1} / {items.length}
+      </div>
+
+      <button
+        type="button"
+        className="lightbox-button lightbox-close"
+        data-lightbox-close
+        onClick={closeLightbox}
+        aria-label="Close image viewer"
+      >
+        <CloseIcon />
+      </button>
+
+      {items.length > 1 && (
+        <>
+          <button
+            type="button"
+            className="lightbox-button lightbox-previous"
+            onClick={() => moveToIndex(currentIndex - 1)}
+            aria-label="Previous image"
+          >
+            <PreviousIcon />
+          </button>
+          <button
+            type="button"
+            className="lightbox-button lightbox-next"
+            onClick={() => moveToIndex(currentIndex + 1)}
+            aria-label="Next image"
+          >
+            <NextIcon />
+          </button>
+        </>
+      )}
+
+      <button
+        type="button"
+        className="lightbox-button lightbox-zoom"
+        onClick={() => toggleZoom()}
+        aria-label={zoom.scale > MIN_ZOOM ? 'Zoom out' : 'Zoom in'}
+      >
+        <ZoomIcon zoomed={zoom.scale > MIN_ZOOM} />
+      </button>
+    </div>,
+    document.body
   );
 };

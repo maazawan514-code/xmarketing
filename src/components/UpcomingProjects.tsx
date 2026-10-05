@@ -141,6 +141,9 @@ export const UpcomingProjects: React.FC = () => {
                       data-lightbox-group={project.id}
                       data-lightbox-title={image.alt}
                       data-lightbox-caption={project.tagline}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Open image: ${image.alt}`}
                       loading="lazy"
                       decoding="async"
                       className="aspect-[4/3] h-full w-full object-cover"

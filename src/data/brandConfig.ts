@@ -126,7 +126,6 @@ export interface ResidenceCard {
   area: string;
   bedrooms: string;
   bathrooms: string;
-  startingPrice: string;
   image: string;
   description: string;
   features: string[];
@@ -144,7 +143,6 @@ export const RESIDENCES_CONTENT: {
     description: string;
     features: string[];
     image: string;
-    price: string;
   };
 } = {
   eyebrow: 'The Residences',
@@ -159,7 +157,6 @@ export const RESIDENCES_CONTENT: {
       area: '52 m² / 560 sq ft',
       bedrooms: 'Studio Suite',
       bathrooms: '1 Spa Bath',
-      startingPrice: 'CHF 1,280,000',
       image:
         'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=900&q=85',
       description:
@@ -173,7 +170,6 @@ export const RESIDENCES_CONTENT: {
       area: '88 m² / 947 sq ft',
       bedrooms: '1 Master Bedroom',
       bathrooms: '1.5 Bathrooms',
-      startingPrice: 'CHF 2,150,000',
       image:
         'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=900&q=85',
       description:
@@ -187,7 +183,6 @@ export const RESIDENCES_CONTENT: {
       area: '142 m² / 1,528 sq ft',
       bedrooms: '2 Ensuite Bedrooms',
       bathrooms: '2.5 Bathrooms',
-      startingPrice: 'CHF 3,650,000',
       image:
         'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85',
       description:
@@ -201,7 +196,6 @@ export const RESIDENCES_CONTENT: {
       area: '215 m² / 2,314 sq ft',
       bedrooms: '3 Ensuite Bedrooms',
       bathrooms: '3.5 Bathrooms',
-      startingPrice: 'CHF 5,400,000',
       image:
         'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=85',
       description:
@@ -215,7 +209,6 @@ export const RESIDENCES_CONTENT: {
       area: '280 m² / 3,014 sq ft',
       bedrooms: '3 Bedrooms + Study',
       bathrooms: '4 Bathrooms',
-      startingPrice: 'CHF 7,200,000',
       image:
         'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=85',
       description:
@@ -229,7 +222,6 @@ export const RESIDENCES_CONTENT: {
       area: '390 m² / 4,198 sq ft',
       bedrooms: '4 Ensuite Bedrooms',
       bathrooms: '5 Bathrooms',
-      startingPrice: 'CHF 11,800,000',
       image:
         'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=900&q=85',
       description:
@@ -251,7 +243,6 @@ export const RESIDENCES_CONTENT: {
     ],
     image:
       'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1920&q=85',
-    price: 'Price on Application / Registration',
   },
 };
 
@@ -542,8 +533,8 @@ export const REGISTRATION_BENEFITS = [
   },
   {
     number: 'II.',
-    title: 'Founders’ Inaugural Pricing',
-    desc: 'Access exclusive pre-launch pricing terms, tailored 1% monthly milestone schedules, and complimentary bespoke furniture packages.',
+    title: 'Founders’ Early Access',
+    desc: 'Access exclusive pre-launch releases, curated residence selections, and complimentary bespoke furniture packages.',
   },
   {
     number: 'III.',

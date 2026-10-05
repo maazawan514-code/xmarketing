@@ -5,7 +5,7 @@ export const TestimonialsSection: React.FC = () => {
   const testimonials = [
     {
       quote:
-        'X Marketing transformed our $45M Miami penthouse launch from an ordinary portal listing into an international cultural event. Their targeted geo-fencing in Aspen and Zurich brought two competing cash buyers within 60 days.',
+        'X Marketing transformed our Miami penthouse launch from an ordinary portal listing into an international cultural event. Their targeted geo-fencing in Aspen and Zurich brought two competing buyers within 60 days.',
       author: 'Marcus Vance',
       role: 'Managing Director of Luxury Developments',
       organization: "Sotheby's International Realty",
@@ -13,7 +13,7 @@ export const TestimonialsSection: React.FC = () => {
     },
     {
       quote:
-        'Most agencies deliver pretty renders and zero verified buyers. X Marketing delivered 184 fully vetted off-market inquiries for our London Mayfair conversion and pre-sold £72M before scaffolding was even dismantled.',
+        'Most agencies deliver pretty renders and zero verified buyers. X Marketing delivered 184 fully vetted off-market inquiries for our London Mayfair conversion and generated strong demand before scaffolding was even dismantled.',
       author: 'Helena Sterling',
       role: 'Head of Global Capital Acquisitions',
       organization: 'Mayfair Heritage Fund',

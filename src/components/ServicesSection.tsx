@@ -33,7 +33,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenGetStart
         'Custom Audience Seeding via Family Office & Executive Data',
         'Real-time Ad Fraud Elimination & Verification Protocol',
       ],
-      kpi: '$42M in direct contract volume attributed to digital channels',
+      kpi: 'Global investor acquisition through digital channels',
     },
     {
       num: '03',
@@ -46,7 +46,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenGetStart
         'Interactive 3D Digital Twin & VR Virtual Tours',
         'Bespoke Social Short-Form Cuts for Instagram & LinkedIn',
       ],
-      kpi: '48% of overseas buyers placed deposits prior to physical visits',
+      kpi: 'Remote buyer engagement before physical visits',
     },
     {
       num: '04',

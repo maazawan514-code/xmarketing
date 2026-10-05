@@ -1,0 +1,220 @@
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e6e6e6 0%, #f2f2f2 100%);
+  animation: lightbox-fade-in 200ms ease-out both;
+}
+
+.lightbox-stage-area {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-stage {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  cursor: zoom-in;
+}
+
+.lightbox-stage.is-dragging {
+  cursor: grabbing;
+}
+
+.lightbox-stage.is-zoomed:not(.is-dragging) {
+  cursor: grab;
+}
+
+.lightbox-image {
+  display: block;
+  width: min(100%, 1600px);
+  height: min(85vh, 900px);
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform-origin: center center;
+  transition: transform 200ms ease;
+  will-change: transform;
+}
+
+.lightbox-stage.is-dragging .lightbox-image {
+  transition: none;
+}
+
+.lightbox-button {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(25, 25, 25, 0.12);
+  border-radius: 50%;
+  background: #fff;
+  color: #252525;
+  box-shadow: 0 5px 22px rgba(20, 20, 20, 0.14);
+  cursor: pointer;
+  transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+
+.lightbox-button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 28px rgba(20, 20, 20, 0.2);
+}
+
+.lightbox-button:focus-visible {
+  outline: 3px solid #555;
+  outline-offset: 3px;
+}
+
+.lightbox-button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.lightbox-close {
+  top: 24px;
+  right: 24px;
+}
+
+.lightbox-previous,
+.lightbox-next {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.lightbox-previous:hover,
+.lightbox-next:hover {
+  transform: translateY(-50%) scale(1.08);
+}
+
+.lightbox-previous {
+  left: 24px;
+}
+
+.lightbox-next {
+  right: 24px;
+}
+
+.lightbox-zoom {
+  bottom: 24px;
+  left: 24px;
+}
+
+.lightbox-counter {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  z-index: 2;
+  color: rgba(25, 25, 25, 0.7);
+  font: 600 12px/1.4 system-ui, sans-serif;
+  letter-spacing: 0.1em;
+  transform: translateX(-50%);
+}
+
+.lightbox-caption {
+  position: absolute;
+  right: 88px;
+  bottom: 26px;
+  left: 88px;
+  z-index: 1;
+  width: fit-content;
+  max-width: min(70vw, 720px);
+  margin: 0 auto;
+  padding: 9px 16px;
+  border: 1px solid rgba(25, 25, 25, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+  color: rgba(25, 25, 25, 0.78);
+  font: 400 13px/1.4 system-ui, sans-serif;
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+
+@keyframes lightbox-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .lightbox-image {
+    width: 100%;
+    height: 82vh;
+  }
+
+  .lightbox-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .lightbox-button svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .lightbox-close {
+    top: 16px;
+    right: 16px;
+  }
+
+  .lightbox-previous {
+    left: 12px;
+  }
+
+  .lightbox-next {
+    right: 12px;
+  }
+
+  .lightbox-zoom {
+    bottom: 16px;
+    left: 16px;
+  }
+
+  .lightbox-counter {
+    top: 30px;
+  }
+
+  .lightbox-caption {
+    bottom: 18px;
+    max-width: calc(100vw - 150px);
+    padding: 7px 11px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox-overlay {
+    animation: none;
+  }
+
+  .lightbox-button,
+  .lightbox-image {
+    transition: none;
+  }
+}

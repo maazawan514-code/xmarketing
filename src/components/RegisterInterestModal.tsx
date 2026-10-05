@@ -112,7 +112,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
       `• WhatsApp: ${formData.whatsappNumber}\n` +
       `• Email: ${formData.email}\n` +
       `• City / Country: ${formData.location}\n\n` +
-      `Please share exclusive pricing, payment schedule, and VIP booking documentation.`
+      `Please share project information and the next steps.`
     );
 
     const waLink = `https://wa.me/${COMPANY.whatsappRaw}?text=${msg}`;
@@ -135,7 +135,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
       `• WhatsApp: ${formData.whatsappNumber}\n` +
       `• Email: ${formData.email}\n` +
       `• City / Country: ${formData.location}\n\n` +
-      `Please share exclusive pricing, payment schedule, and VIP booking documentation.`
+      `Please share project information and the next steps.`
     );
     window.open(`https://wa.me/${COMPANY.whatsappRaw}?text=${msg}`, '_blank');
   };
@@ -237,7 +237,7 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
                       What is your WhatsApp number?
                     </h4>
                     <p className="text-xs text-[#A3A3A3] mt-1">
-                      We send verified payment plans, site videos, and instant updates on WhatsApp.
+                      We send verified project information, site videos, and instant updates on WhatsApp.
                     </p>
                   </div>
                   <div>
@@ -354,17 +354,17 @@ export const RegisterInterestModal: React.FC<RegisterInterestModalProps> = ({
                       {
                         id: 'Indigo Walk',
                         title: 'Indigo Walk (Defence Road, Lahore)',
-                        desc: 'Commercial Outlets & Executive Corporate Floors — from PKR 1.85 Cr',
+                        desc: 'Commercial Outlets & Executive Corporate Floors',
                       },
                       {
                         id: 'Madina Mall & Residency',
                         title: 'Madina Mall & Residency (Bahria Orchard)',
-                        desc: 'Luxury Serviced Apartments & Retail Mall — from PKR 45 Lakhs',
+                        desc: 'Luxury Serviced Apartments & Retail Mall',
                       },
                       {
                         id: 'Advise me on best ROI',
                         title: 'Advise me (Tailored Portfolio Match)',
-                        desc: 'Let a senior X Marketing director analyze my capital budget & yield goals',
+                        desc: 'Let a senior X Marketing director discuss my investment goals and preferred unit types',
                       },
                     ].map((option) => (
                       <div

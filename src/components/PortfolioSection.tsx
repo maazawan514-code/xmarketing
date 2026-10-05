@@ -15,7 +15,6 @@ interface Project {
   category: 'penthouses' | 'estates' | 'towers';
   categoryLabel: string;
   location: string;
-  valuation: string;
   headlineMetric: string;
   image: string;
   summary: string;
@@ -35,7 +34,6 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
       category: 'penthouses',
       categoryLabel: 'Ultra-Luxury Penthouse',
       location: 'South Beach, Miami, FL',
-      valuation: '$45,000,000 Portfolio',
       headlineMetric: '100% Sold Out in 84 Days',
       image: miamiPenthouseImage,
       summary: 'A curated triplex oceanfront penthouse requiring a discreet, global marketing sprint targeted at tech founders and Latin American family offices.',
@@ -43,7 +41,6 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
       metrics: [
         { label: 'Qualified Private Showings', value: '412 Tours' },
         { label: 'Global Video Impressions', value: '3.4M Views' },
-        { label: 'Sale Price / Sq Ft', value: '$4,150 / sqft' },
         { label: 'Ad Spend ROAS', value: '6.2x Direct' },
       ],
       strategy: [
@@ -59,8 +56,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
       category: 'estates',
       categoryLabel: 'Heritage Prime Estate',
       location: 'Mayfair & Kensington, London, UK',
-      valuation: '£120,000,000 Development',
-      headlineMetric: '£72M Pre-Sold Ahead of Completion',
+      headlineMetric: 'Pre-Sold Ahead of Completion',
       image: londonMansionImage,
       summary: 'Restoration and repositioning of 24 ultra-prime heritage residences for an institutional European fund seeking Middle Eastern and Asian private capital.',
       duration: '6 Months Campaign',
@@ -68,7 +64,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
         { label: 'Off-Market Inquiries', value: '184 Verified' },
         { label: 'Avg Contract Time', value: '28 Days' },
         { label: 'Financial Times Reach', value: '920k UHNW' },
-        { label: 'Price vs Benchmark', value: '+18% Premium' },
+        { label: 'Financial Times Reach', value: '920k UHNW' },
       ],
       strategy: [
         'Curated coffee table collector book sent to prime private bank client lists',
@@ -83,8 +79,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
       category: 'towers',
       categoryLabel: 'Architectural Skyscraper',
       location: "Billionaires' Row, Manhattan, NY",
-      valuation: '$85,000,000 Trophy Floor',
-      headlineMetric: '$28M Week-One Contract Signed',
+      headlineMetric: 'Week-One Contract Signed',
       image: manhattanTowerImage,
       summary: 'Double-height glass duplex penthouse high above Central Park, marketed through cinematic twilight drone production and Wall Street executive placements.',
       duration: '45 Days Execution',
@@ -107,7 +102,6 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
       category: 'estates',
       categoryLabel: 'Modernist Trophy Villa',
       location: 'Bel Air & Beverly Hills, CA',
-      valuation: '$28,500,000 Private Estate',
       headlineMetric: 'Record-Setting Neighborhood Close',
       image: beverlyHillsVillaImage,
       summary: 'Architectural cantilever masterpiece designed by a Pritzker-winning architect, sold to an international technology entrepreneur via hyper-targeted creative video.',
@@ -208,6 +202,13 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
                   <img
                     src={project.image}
                     alt={project.title}
+                    data-lightbox
+                    data-lightbox-group="portfolio-case-studies"
+                    data-lightbox-title={project.title}
+                    data-lightbox-caption={project.location}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Open image: ${project.title}`}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     onError={(e) => {
@@ -221,9 +222,6 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
                     <span className="flex items-center gap-1.5 px-3 py-1 bg-black/75 backdrop-blur-md rounded border border-white/10">
                       <MapPin className="w-3 h-3 text-[#FF0000]" />
                       <span>{project.location}</span>
-                    </span>
-                    <span className="px-3 py-1 bg-black/75 backdrop-blur-md rounded border border-white/10 font-mono font-medium">
-                      {project.valuation}
                     </span>
                   </div>
                 </div>
@@ -246,22 +244,16 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
 
                   {/* Quantitative proof metrics */}
                   <div className="grid grid-cols-2 gap-4 py-4 border-y border-neutral-800/80">
-                    <div>
-                      <div className="text-lg font-bold text-white tabular-nums font-mono">
-                        {project.metrics[0].value}
+                    {project.metrics.slice(0, 2).map((metric) => (
+                      <div key={metric.label}>
+                        <div className="text-lg font-bold text-white tabular-nums font-mono">
+                          {metric.value}
+                        </div>
+                        <div className="text-[11px] text-neutral-400">
+                          {metric.label}
+                        </div>
                       </div>
-                      <div className="text-[11px] text-neutral-400">
-                        {project.metrics[0].label}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-bold text-[#FF0000] tabular-nums font-mono">
-                        {project.metrics[3].value}
-                      </div>
-                      <div className="text-[11px] text-neutral-400">
-                        {project.metrics[3].label}
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -299,6 +291,13 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
               <img
                 src={selectedProject.image}
                 alt={selectedProject.title}
+                data-lightbox
+                data-lightbox-group="portfolio-case-study-detail"
+                data-lightbox-title={selectedProject.title}
+                data-lightbox-caption={selectedProject.location}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open image: ${selectedProject.title}`}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
               />
@@ -314,7 +313,6 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenGetSta
                   <MapPin className="w-3.5 h-3.5 text-[#FF0000]" />
                   <span>{selectedProject.location}</span>
                   <span className="mx-2">·</span>
-                  <span className="text-white font-mono">{selectedProject.valuation}</span>
                 </p>
               </div>
             </div>

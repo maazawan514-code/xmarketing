@@ -12,12 +12,12 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  Sparkles,
   PhoneCall,
   Clock,
   Navigation,
 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
+import { ProjectBrandCards } from './ProjectBrandCards';
 
 interface ProjectPageProps {
   project: Project;
@@ -85,8 +85,7 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
         {/* Hero Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-12 sm:pb-16">
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E10600] text-white font-mono text-xs font-bold shadow-lg shadow-[#E10600]/40">
-              <Sparkles className="w-3.5 h-3.5" />
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#E10600] text-white font-mono text-xs font-bold shadow-lg shadow-[#E10600]/40">
               <span>{project.status}</span>
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 border border-white/20 text-neutral-200 text-xs font-medium backdrop-blur-md">
@@ -254,6 +253,14 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
         </div>
       </section>
 
+      {project.brands && project.brands.length > 0 && (
+        <ProjectBrandCards
+          projectName={project.name}
+          brands={project.brands}
+          className="border-t border-white/5 bg-[#050505] px-4 py-12 sm:px-6 lg:px-8"
+        />
+      )}
+
       {/* 4) IMAGE GALLERY WITH INTERACTIVE LIGHTBOX */}
       <section className="py-20 bg-[#0A0A0A] border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -332,6 +339,42 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
         </div>
 
       </section>
+
+      {project.realPhotos && project.realPhotos.length > 0 && (
+        <section className="border-t border-white/5 bg-[#050505] py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-10">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#FF2A2A]">
+                Site Photos
+              </p>
+              <h2 className="font-heading text-3xl font-extrabold text-white sm:text-4xl">
+                Real Project Photos
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {project.realPhotos.map((photo) => (
+                <img
+                  key={photo.url}
+                  src={photo.url}
+                  alt={photo.title}
+                  width={photo.width}
+                  height={photo.height}
+                  loading="lazy"
+                  decoding="async"
+                  data-lightbox
+                  data-lightbox-group={`${project.id}-real-photos`}
+                  data-lightbox-title={photo.title}
+                  data-lightbox-caption={photo.caption}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open image: ${photo.title}`}
+                  className="aspect-[4/3] h-full w-full cursor-pointer rounded-xl border border-white/10 object-cover transition-colors hover:border-[#E10600]/60"
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {project.floorPlans && project.floorPlans.length > 0 && (
         <section className="border-t border-white/5 bg-[#0A0A0A] py-20">

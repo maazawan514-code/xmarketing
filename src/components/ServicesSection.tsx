@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Sparkles, LineChart, KeyRound, ArrowRight, Layers, Film, CheckCircle } from 'lucide-react';
+import { Camera, LineChart, KeyRound, ArrowRight, Layers, Film, CheckCircle } from 'lucide-react';
 
 interface ServicesSectionProps {
   onOpenGetStarted: () => void;

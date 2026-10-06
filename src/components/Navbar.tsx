@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { XLogo } from './XLogo';
-import { Menu, X, ArrowRight, Sparkles } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 
 interface NavbarProps {
   onRegisterInterest: () => void;
@@ -127,9 +127,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             type="button"
             onClick={onRegisterInterest}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl red-gradient-bg hover:brightness-110 text-white font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-lg shadow-[#E10600]/30 hover:shadow-xl hover:shadow-[#E10600]/50 cursor-pointer transform hover:-translate-y-0.5"
+            className="flex items-center px-5 py-2.5 rounded-xl red-gradient-bg hover:brightness-110 text-white font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-lg shadow-[#E10600]/30 hover:shadow-xl hover:shadow-[#E10600]/50 cursor-pointer transform hover:-translate-y-0.5"
           >
-            <Sparkles className="w-3.5 h-3.5 text-white" />
             <span>Register Interest</span>
           </button>
         </div>
@@ -139,10 +138,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             type="button"
             onClick={onRegisterInterest}
-            className="sm:hidden flex items-center justify-center p-2.5 rounded-xl red-gradient-bg text-white font-bold text-xs shadow-md shadow-[#E10600]/40"
+            className="sm:hidden flex items-center justify-center px-3 py-2.5 rounded-xl red-gradient-bg text-white font-bold text-[10px] uppercase tracking-wide shadow-md shadow-[#E10600]/40"
             aria-label="Register Interest"
           >
-            <Sparkles className="w-4 h-4" />
+            Register
           </button>
 
           <button
@@ -180,9 +179,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setMobileMenuOpen(false);
                 onRegisterInterest();
               }}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl red-gradient-bg text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#E10600]/40"
+              className="w-full flex items-center justify-center py-3 px-4 rounded-xl red-gradient-bg text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#E10600]/40"
             >
-              <Sparkles className="w-4 h-4" />
               <span>Register Interest</span>
             </button>
           </div>

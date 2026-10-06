@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FEATURED_PROJECTS, Project, COMPANY } from '../data/content';
-import { MapPin, Building, ArrowUpRight, PhoneCall, Sparkles, Video } from 'lucide-react';
+import { MapPin, Building, ArrowUpRight, PhoneCall, Video } from 'lucide-react';
 import manhattanTowerImage from '../assets/images/portfolio_manhattan_tower_1790518732122.jpg';
 
 interface FeaturedProjectsProps {
@@ -47,8 +47,7 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 pb-8 border-b border-white/10 gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-[#E10600]/30 mb-4 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 text-[#FF2A2A]" />
+            <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-[#E10600]/30 mb-4 backdrop-blur-md">
               <span className="text-xs font-semibold tracking-[0.2em] text-[#FF2A2A] uppercase font-mono">
                 Prime Lahore Portfolio
               </span>

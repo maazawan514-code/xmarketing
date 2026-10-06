@@ -67,7 +67,7 @@ export const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">Direct Phone Line</div>
-                    <div className="text-base font-bold text-white font-mono">{COMPANY.phoneDisplay}</div>
+                    <div className="text-base font-bold text-white font-sans">{COMPANY.phoneDisplay}</div>
                   </div>
                 </a>
 
@@ -83,7 +83,7 @@ export const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">WhatsApp Direct Desk</div>
-                    <div className="text-base font-bold text-white font-mono">{COMPANY.whatsappDisplay}</div>
+                    <div className="text-base font-bold text-white font-sans">{COMPANY.whatsappDisplay}</div>
                   </div>
                 </a>
 
@@ -97,7 +97,7 @@ export const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">Business Email</div>
-                    <div className="text-base font-bold text-white font-mono">{COMPANY.email}</div>
+                    <div className="break-words text-base font-bold text-white font-sans [overflow-wrap:anywhere]">{COMPANY.email}</div>
                   </div>
                 </a>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, ArrowLeft, Check, Sparkles, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, ShieldCheck } from 'lucide-react';
 import { BRAND } from '../../data/brandConfig';
 
 export interface RegistrationSubmission {

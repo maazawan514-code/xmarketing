@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { SplashScreen } from './components/SplashScreen';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { LiveVideo } from './components/LiveVideo';
 import { ScrollingTicker } from './components/ScrollingTicker';
 import { StatsStrip } from './components/StatsStrip';
 import { WhyChooseUs } from './components/WhyChooseUs';
@@ -20,6 +21,7 @@ import { CtaSection } from './components/CtaSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
+import { XAIAssistant } from './components/XAIAssistant';
 import { Lightbox } from './components/Lightbox';
 import { RegisterInterestModal } from './components/RegisterInterestModal';
 import { ProjectPage } from './components/ProjectPage';
@@ -154,6 +156,8 @@ export default function App() {
               onRegisterInterest={() => handleOpenRegisterInterest()}
             />
 
+            <LiveVideo />
+
             {/* 4) SCROLLING TICKER MARQUEE UNDER HERO */}
             <ScrollingTicker />
 
@@ -199,6 +203,7 @@ export default function App() {
 
         {/* FLOATING WHATSAPP BUTTON */}
         <FloatingWhatsApp />
+        <XAIAssistant />
 
         <Lightbox />
 

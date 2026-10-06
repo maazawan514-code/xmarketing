@@ -4,8 +4,6 @@
  * Extensible projects array, interactive project pages data, stats, and company info.
  */
 
-import indigoWalkImage from '../assets/images/indigo_walk_commercial_1790698931457.jpg';
-import indigoAtriumImage from '../assets/images/indigo_walk_atrium_1790758568890.jpg';
 import madinaMallImage from '../assets/images/madina_mall_residency_1790698946982.jpg';
 import madinaResidencyImage from '../assets/images/madina_residency_suite_1790758590587.jpg';
 import manhattanTowerImage from '../assets/images/portfolio_manhattan_tower_1790518732122.jpg';
@@ -16,6 +14,10 @@ import madinahExterior3 from '../assets/images/madinah-mall/madinah-mall-exterio
 import madinahExterior4 from '../assets/images/madinah-mall/madinah-mall-exterior-4.jpg';
 import madinahGroundFloorPlan from '../assets/images/madinah-mall/madinah-mall-ground-floor-plan.jpg';
 import madinahFirstFloorPlan from '../assets/images/madinah-mall/madinah-mall-first-floor-plan.jpg';
+import indigoWalkImage from '../assets/images/indigo_walk_commercial_1790698931457.jpg';
+import indigoAtriumImage from '../assets/images/indigo_walk_atrium_1790758568890.jpg';
+import madinaMallAerial from '/images/madina-mall/madina-mall-aerial.jpg';
+import madinaMallTower from '/images/madina-mall/madina-mall-tower.jpg';
 
 export const COMPANY = {
   name: 'X Marketing',
@@ -53,6 +55,22 @@ export interface ProjectGalleryItem {
   width?: number;
   height?: number;
 }
+
+export interface ProjectRealPhoto extends ProjectGalleryItem {
+  width: number;
+  height: number;
+}
+
+export interface ProjectBrand {
+  name: string;
+  logo?: string;
+}
+
+export const INDIGO_WALK_BRANDS: ProjectBrand[] = [
+  { name: 'UBL Bank' },
+  { name: 'Jalal Sons' },
+  { name: 'Ice Cream & Sweets' },
+];
 
 export interface ProjectChapter {
   number: string;
@@ -96,13 +114,15 @@ export interface Project {
   status: 'Pre-Launch' | 'Under Fast Construction' | 'Ready for Possession';
   keyFacts: ProjectKeyFacts;
   gallery: ProjectGalleryItem[];
+  realPhotos?: ProjectRealPhoto[];
+  brands?: ProjectBrand[];
   floorPlans?: ProjectGalleryItem[];
   locationDetails: ProjectLocationDetails;
   chapters: ProjectChapter[];
   faqs: ProjectFAQ[];
 }
 
-export const FEATURED_PROJECTS: Project[] = [
+const PROJECT_DATA: Project[] = [
   {
     id: 'indigo-walk',
     name: 'Indigo Walk',
@@ -150,6 +170,8 @@ export const FEATURED_PROJECTS: Project[] = [
         caption: 'Panoramic open-air dining terrace with skyline views along Defence Road.',
       },
     ],
+    realPhotos: [],
+    brands: INDIGO_WALK_BRANDS,
     locationDetails: {
       address: 'Main Defence Road, Facing DHA Rahbar Gate 2, Lahore, Punjab',
       area: 'South Lahore Commercial Growth Corridor',
@@ -272,7 +294,22 @@ export const FEATURED_PROJECTS: Project[] = [
         width: 1211,
         height: 768,
       },
+      {
+        url: madinaMallAerial,
+        title: 'Madina Mall & Residency aerial development view',
+        caption: 'Aerial view of the Madina Mall & Residency development.',
+        width: 1278,
+        height: 720,
+      },
+      {
+        url: madinaMallTower,
+        title: 'Madina Mall & Residency tower exterior',
+        caption: 'Exterior tower view of Madina Mall & Residency.',
+        width: 1278,
+        height: 720,
+      },
     ],
+    realPhotos: [],
     floorPlans: [
       {
         url: madinahGroundFloorPlan,
@@ -353,6 +390,10 @@ export const FEATURED_PROJECTS: Project[] = [
     ],
   },
 ];
+
+export const FEATURED_PROJECTS = PROJECT_DATA.filter(
+  (project) => project.id === 'madina-mall-residency'
+);
 
 // 2) ANIMATED COUNTERS EXACTLY AS REQUESTED:
 // Projects Marketed, Happy Investors, Years of Experience, Cities Covered

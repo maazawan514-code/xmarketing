@@ -2,7 +2,7 @@ import React from 'react';
 import { XLogo } from './XLogo';
 import { SocialLinks } from './SocialLinks';
 import { COMPANY } from '../data/content';
-import { Phone, Mail, MapPin, ArrowUp, Sparkles } from 'lucide-react';
+import { Phone, Mail, MapPin, ArrowUp } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 
 interface FooterProps {
@@ -90,9 +90,8 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterInterest, onNavigateHo
                 <button
                   type="button"
                   onClick={onRegisterInterest}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl red-gradient-bg text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-[#E10600]/30 hover:shadow-lg transition-all cursor-pointer"
+                  className="inline-flex items-center px-3.5 py-2 rounded-xl red-gradient-bg text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-[#E10600]/30 hover:shadow-lg transition-all cursor-pointer"
                 >
-                  <Sparkles className="w-3 h-3" />
                   <span>Register Interest</span>
                 </button>
               )}
@@ -152,7 +151,7 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterInterest, onNavigateHo
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-[#E10600] shrink-0" />
-                <a href={`tel:${COMPANY.phoneRaw}`} className="hover:text-white transition-colors font-mono">
+                <a href={`tel:${COMPANY.phoneRaw}`} className="hover:text-white transition-colors font-sans">
                   {COMPANY.phoneDisplay}
                 </a>
               </div>
@@ -162,14 +161,14 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterInterest, onNavigateHo
                   href={COMPANY.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors font-mono"
+                  className="hover:text-white transition-colors font-sans"
                 >
                   {COMPANY.whatsappDisplay}
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#E10600] shrink-0" />
-                <a href={`mailto:${COMPANY.email}`} className="hover:text-white transition-colors">
+                <a href={`mailto:${COMPANY.email}`} className="break-words font-sans hover:text-white transition-colors [overflow-wrap:anywhere]">
                   {COMPANY.email}
                 </a>
               </div>
@@ -184,7 +183,7 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterInterest, onNavigateHo
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500 gap-4">
           <div>
-            &copy; 2026 X Marketing. All rights reserved. Registered in Lahore, Pakistan.
+            &copy; 2026 X Marketing. All rights reserved.
           </div>
 
           <div className="flex items-center gap-6">

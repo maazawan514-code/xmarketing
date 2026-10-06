@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, ArrowRight, ArrowLeft, CheckCircle2, ShieldCheck, Sparkles, Building2 } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, CheckCircle2, ShieldCheck, Building2 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { COMPANY, FEATURED_PROJECTS } from '../data/content';
 import { XLogo } from './XLogo';

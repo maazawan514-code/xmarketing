@@ -1,6 +1,6 @@
 import React from 'react';
 import { COMPANY } from '../data/content';
-import { Briefcase, ArrowRight, Sparkles } from 'lucide-react';
+import { Briefcase, ArrowRight } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 
 export const CareersBanner: React.FC = () => {
@@ -22,8 +22,7 @@ export const CareersBanner: React.FC = () => {
           />
 
           <div className="relative z-10 max-w-2xl text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-[#E10600]/30 mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-[#FF2A2A]" />
+            <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-[#E10600]/30 mb-4">
               <span className="text-xs font-semibold tracking-wider text-[#FF2A2A] uppercase font-mono">
                 Join Lahore's Top Sales Team
               </span>

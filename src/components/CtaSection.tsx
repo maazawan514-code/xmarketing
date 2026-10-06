@@ -1,6 +1,6 @@
 import React from 'react';
 import { COMPANY } from '../data/content';
-import { Sparkles, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 
 interface CtaSectionProps {
@@ -45,9 +45,8 @@ export const CtaSection: React.FC<CtaSectionProps> = ({ onRegisterInterest }) =>
           <button
             type="button"
             onClick={onRegisterInterest}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl red-gradient-bg hover:brightness-110 text-white font-bold text-sm uppercase tracking-wider transition-all duration-200 shadow-xl shadow-[#E10600]/30 hover:shadow-2xl hover:shadow-[#E10600]/50 cursor-pointer transform hover:-translate-y-0.5"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-xl red-gradient-bg hover:brightness-110 text-white font-bold text-sm uppercase tracking-wider transition-all duration-200 shadow-xl shadow-[#E10600]/30 hover:shadow-2xl hover:shadow-[#E10600]/50 cursor-pointer transform hover:-translate-y-0.5"
           >
-            <Sparkles className="w-4 h-4" />
             <span>Register Interest</span>
           </button>
 

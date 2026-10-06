@@ -1,6 +1,6 @@
 import React from 'react';
 import { XLogo } from './XLogo';
-import { ArrowRight, Sparkles, Building2, Users, CheckCircle, ShieldCheck, CreditCard, Headphones } from 'lucide-react';
+import { ArrowRight, Building2, Users, CheckCircle, ShieldCheck, CreditCard, Headphones } from 'lucide-react';
 
 interface HeroProps {
   onExploreProjects: () => void;
@@ -38,8 +38,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreProjects, onRegisterInteres
           {/* Left Column: Copy & CTAs */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
             {/* Small Badge: TRUSTED - TRANSPARENT - RESULTS */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-[#E10600]/40 backdrop-blur-md mb-6 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-[#FF2A2A]" />
+            <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-[#E10600]/40 backdrop-blur-md mb-6 shadow-sm">
               <span className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] text-[#FF2A2A] uppercase font-mono">
                 TRUSTED · TRANSPARENT · RESULTS
               </span>
@@ -64,9 +63,8 @@ export const Hero: React.FC<HeroProps> = ({ onExploreProjects, onRegisterInteres
               <button
                 type="button"
                 onClick={onRegisterInterest}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-xl red-gradient-bg hover:brightness-110 text-white font-bold text-sm uppercase tracking-wider transition-all duration-200 shadow-xl shadow-[#E10600]/35 hover:shadow-2xl hover:shadow-[#E10600]/55 cursor-pointer transform hover:-translate-y-0.5"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-4 rounded-xl red-gradient-bg hover:brightness-110 text-white font-bold text-sm uppercase tracking-wider transition-all duration-200 shadow-xl shadow-[#E10600]/35 hover:shadow-2xl hover:shadow-[#E10600]/55 cursor-pointer transform hover:-translate-y-0.5"
               >
-                <Sparkles className="w-4 h-4" />
                 <span>Register Interest</span>
               </button>
 

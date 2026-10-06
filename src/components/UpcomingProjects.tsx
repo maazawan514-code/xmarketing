@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { ArrowUpRight, MapPin } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { CONTACT_WHATSAPP, UPCOMING_PROJECTS } from '../data/upcomingProjects';
+import { ProjectBrandCards } from './ProjectBrandCards';
 
 const AmbientVideo: React.FC<{ src: string; poster: string; label: string }> = ({ src, poster, label }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -151,6 +152,14 @@ export const UpcomingProjects: React.FC = () => {
                   ))}
                 </div>
               </div>
+
+              {project.brands && project.brands.length > 0 && (
+                <ProjectBrandCards
+                  projectName={project.title}
+                  brands={project.brands}
+                  className="border-b border-white/15 py-7"
+                />
+              )}
 
               <div className="grid gap-x-10 gap-y-8 pt-8 md:grid-cols-2">
                 {project.details.map((group, groupIndex) => (

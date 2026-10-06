@@ -100,7 +100,9 @@ export const LiveVideo: React.FC = () => {
           ) : isVisible && videoSource.kind === 'mp4' ? (
             <video
               src={videoSource.src}
-              controls
+              autoPlay
+              muted
+              loop
               playsInline
               preload="metadata"
               aria-label={LIVE_VIDEO_TITLE}

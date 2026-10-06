@@ -25,4 +25,6 @@ PROJECT 2: MADINA MALL & RESIDENCY (Bahria Orchard, Lahore)
 - Amenities: 30+ amenities, including gym, sauna, spa, jacuzzi, daycare services and laundry facilities.
 - Rental potential: prime location, strong demand for both shops and apartments.
 - Developer: Design & Build (D&B). Delivered 5 out of 6 projects in Bahria Town, known for timely delivery and quality construction. This is their 7th project in Bahria Orchard.
-- Floor plans are available for the basement, ground, first, second, food court and typical floors.
+- Visuals: the Madinah Mall project page shows the exterior renders, the site plan, and floor plans for the ground floor, first floor, second floor and apartment floors.
+- Floor plans are available for the ground floor, first floor, second floor and apartment floors, plus the site plan.
+- When customers ask about layouts, floor plans or how the building looks, answer using these project facts and tell them they can see the images on the Madinah Mall project page.

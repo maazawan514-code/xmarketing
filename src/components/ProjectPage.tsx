@@ -32,6 +32,9 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
 }) => {
   // FAQ Accordion state (record of open FAQ indexes)
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [activeFloorPlanGroup, setActiveFloorPlanGroup] = useState(0);
+  const floorPlanGroups = project.floorPlanGroups;
+  const selectedFloorPlanGroup = floorPlanGroups?.[activeFloorPlanGroup] ?? floorPlanGroups?.[0];
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex((prev) => (prev === index ? null : index));
@@ -344,6 +347,49 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
 
       </section>
 
+      {project.sitePlan && project.sitePlan.length > 0 && (
+        <section className="border-t border-white/5 bg-[#050505] py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto mb-10 max-w-3xl text-center">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#FF2A2A]">
+                Development Layout
+              </p>
+              <h2 className="font-heading text-3xl font-extrabold text-white sm:text-4xl">
+                Site <span className="red-gradient-text">Plan</span>
+              </h2>
+              <p className="mt-3 text-sm text-[#A3A3A3]">
+                Explore the site layout for {project.name}.
+              </p>
+            </div>
+            <div className="space-y-6">
+              {project.sitePlan.map((plan) => (
+                <figure key={plan.title} className="overflow-hidden rounded-2xl border border-white/10 bg-black">
+                  <img
+                    src={plan.url}
+                    alt={plan.title}
+                    width={plan.width}
+                    height={plan.height}
+                    loading="lazy"
+                    decoding="async"
+                    data-lightbox
+                    data-lightbox-group={`${project.id}-site-plan`}
+                    data-lightbox-title={plan.title}
+                    data-lightbox-caption={plan.caption}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Open image: ${plan.title}`}
+                    className="h-auto w-full cursor-zoom-in object-contain"
+                  />
+                  <figcaption className="border-t border-white/10 px-5 py-4 text-sm text-neutral-300">
+                    {plan.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {project.realPhotos && project.realPhotos.length > 0 && (
         <section className="border-t border-white/5 bg-[#050505] py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -380,7 +426,7 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
         </section>
       )}
 
-      {project.floorPlans && project.floorPlans.length > 0 && (
+      {((floorPlanGroups && floorPlanGroups.length > 0) || (project.floorPlans && project.floorPlans.length > 0)) && (
         <section className="border-t border-white/5 bg-[#0A0A0A] py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto mb-14 max-w-3xl text-center">
@@ -393,38 +439,102 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
                 Floor <span className="red-gradient-text">Plans</span>
               </h2>
               <p className="mt-3 text-sm text-[#A3A3A3]">
-                Explore the ground and first floor layouts. Open either plan to zoom in.
+                Explore the available layouts. Open any plan to zoom in.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {project.floorPlans.map((plan) => (
-                <figure
-                  key={plan.title}
-                  className="group overflow-hidden rounded-2xl border border-white/10 bg-black shadow-lg transition-all duration-300 hover:border-[#E10600]/60"
+            {floorPlanGroups && floorPlanGroups.length > 0 ? (
+              <>
+                <div
+                  role="tablist"
+                  aria-label={`${project.name} floor plan categories`}
+                  className="mb-8 flex gap-2 overflow-x-auto pb-2"
                 >
-                  <img
-                    src={plan.url}
-                    alt={plan.title}
-                    width={plan.width}
-                    height={plan.height}
-                    loading="lazy"
-                    decoding="async"
-                    data-lightbox
-                    data-lightbox-group={`${project.id}-floor-plans`}
-                    data-lightbox-title={plan.title}
-                    data-lightbox-caption={plan.caption}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Open image: ${plan.title}`}
-                    className="h-auto w-full cursor-zoom-in object-contain transition-transform duration-500 group-hover:scale-[1.02]"
-                  />
-                  <figcaption className="border-t border-white/10 px-5 py-4 text-sm font-semibold text-white">
-                    {plan.caption}
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
+                  {floorPlanGroups.map((group, index) => (
+                    <button
+                      key={group.id}
+                      id={`floor-tab-${project.id}-${group.id}`}
+                      type="button"
+                      role="tab"
+                      aria-selected={activeFloorPlanGroup === index}
+                      aria-controls={`floor-panel-${project.id}-${group.id}`}
+                      onClick={() => setActiveFloorPlanGroup(index)}
+                      className={`shrink-0 rounded-full border px-4 py-2.5 text-sm font-semibold transition-colors ${
+                        activeFloorPlanGroup === index
+                          ? 'border-[#E10600] bg-[#E10600] text-white'
+                          : 'border-white/15 bg-white/[0.04] text-neutral-300 hover:border-[#E10600]/60 hover:text-white'
+                      }`}
+                    >
+                      {group.label}
+                    </button>
+                  ))}
+                </div>
+                {selectedFloorPlanGroup && (
+                  <div
+                    id={`floor-panel-${project.id}-${selectedFloorPlanGroup.id}`}
+                    role="tabpanel"
+                    aria-labelledby={`floor-tab-${project.id}-${selectedFloorPlanGroup.id}`}
+                    className="grid grid-cols-1 gap-6 md:grid-cols-2"
+                  >
+                    {selectedFloorPlanGroup.images.map((plan) => (
+                      <figure
+                        key={plan.title}
+                        className="group overflow-hidden rounded-2xl border border-white/10 bg-black shadow-lg transition-all duration-300 hover:border-[#E10600]/60"
+                      >
+                        <img
+                          src={plan.url}
+                          alt={plan.title}
+                          width={plan.width}
+                          height={plan.height}
+                          loading="lazy"
+                          decoding="async"
+                          data-lightbox
+                          data-lightbox-group={`${project.id}-floor-${selectedFloorPlanGroup.id}`}
+                          data-lightbox-title={plan.title}
+                          data-lightbox-caption={plan.caption}
+                          role="button"
+                          tabIndex={0}
+                          aria-label={`Open image: ${plan.title}`}
+                          className="h-auto w-full cursor-zoom-in object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+                        />
+                        <figcaption className="border-t border-white/10 px-5 py-4 text-sm font-semibold text-white">
+                          {plan.caption}
+                        </figcaption>
+                      </figure>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {project.floorPlans?.map((plan) => (
+                  <figure
+                    key={plan.title}
+                    className="group overflow-hidden rounded-2xl border border-white/10 bg-black shadow-lg transition-all duration-300 hover:border-[#E10600]/60"
+                  >
+                    <img
+                      src={plan.url}
+                      alt={plan.title}
+                      width={plan.width}
+                      height={plan.height}
+                      loading="lazy"
+                      decoding="async"
+                      data-lightbox
+                      data-lightbox-group={`${project.id}-floor-plans`}
+                      data-lightbox-title={plan.title}
+                      data-lightbox-caption={plan.caption}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Open image: ${plan.title}`}
+                      className="h-auto w-full cursor-zoom-in object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+                    />
+                    <figcaption className="border-t border-white/10 px-5 py-4 text-sm font-semibold text-white">
+                      {plan.caption}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
 
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <button

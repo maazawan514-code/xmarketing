@@ -14,6 +14,20 @@ import madinahExterior3 from '../assets/images/madinah-mall/madinah-mall-exterio
 import madinahExterior4 from '../assets/images/madinah-mall/madinah-mall-exterior-4.jpg';
 import madinahGroundFloorPlan from '../assets/images/madinah-mall/madinah-mall-ground-floor-plan.jpg';
 import madinahFirstFloorPlan from '../assets/images/madinah-mall/madinah-mall-first-floor-plan.jpg';
+import madinaMallExteriorRender from '../assets/images/madinah-mall/madina-mall-exterior-render.jpg';
+import madinaMallSitePlan from '../assets/images/madinah-mall/madina-mall-site-plan.jpg';
+import madinaMallGroundFloorPlan1 from '../assets/images/madinah-mall/madina-mall-ground-floor-plan-1.jpg';
+import madinaMallGroundFloorPlan2 from '../assets/images/madinah-mall/madina-mall-ground-floor-plan-2.jpg';
+import madinaMallGroundFloorPlan3 from '../assets/images/madinah-mall/madina-mall-ground-floor-plan-3.jpg';
+import madinaMallFirstFloorPlan1 from '../assets/images/madinah-mall/madina-mall-first-floor-plan-1.jpg';
+import madinaMallFirstFloorPlan2 from '../assets/images/madinah-mall/madina-mall-first-floor-plan-2.jpg';
+import madinaMallFirstFloorPlan3 from '../assets/images/madinah-mall/madina-mall-first-floor-plan-3.jpg';
+import madinaMallSecondFloorPlan1 from '../assets/images/madinah-mall/madina-mall-second-floor-plan-1.jpg';
+import madinaMallSecondFloorPlan2 from '../assets/images/madinah-mall/madina-mall-second-floor-plan-2.jpg';
+import madinaMallSecondFloorPlan3 from '../assets/images/madinah-mall/madina-mall-second-floor-plan-3.jpg';
+import madinaMallApartmentFloorPlan1 from '../assets/images/madinah-mall/madina-mall-apartment-floor-plan-1.jpg';
+import madinaMallApartmentFloorPlan2 from '../assets/images/madinah-mall/madina-mall-apartment-floor-plan-2.jpg';
+import madinaMallApartmentFloorPlan3 from '../assets/images/madinah-mall/madina-mall-apartment-floor-plan-3.jpg';
 import indigoWalkImage from '../assets/images/indigo_walk_commercial_1790698931457.jpg';
 import indigoAtriumImage from '../assets/images/indigo_walk_atrium_1790758568890.jpg';
 
@@ -52,6 +66,12 @@ export interface ProjectGalleryItem {
   caption: string;
   width?: number;
   height?: number;
+}
+
+export interface ProjectFloorPlanGroup {
+  id: string;
+  label: string;
+  images: ProjectGalleryItem[];
 }
 
 export interface ProjectRealPhoto extends ProjectGalleryItem {
@@ -112,9 +132,11 @@ export interface Project {
   status: 'Pre-Launch' | 'Under Fast Construction' | 'Ready for Possession';
   keyFacts: ProjectKeyFacts;
   gallery: ProjectGalleryItem[];
+  sitePlan?: ProjectGalleryItem[];
   realPhotos?: ProjectRealPhoto[];
   brands?: ProjectBrand[];
   floorPlans?: ProjectGalleryItem[];
+  floorPlanGroups?: ProjectFloorPlanGroup[];
   locationDetails: ProjectLocationDetails;
   chapters: ProjectChapter[];
   faqs: ProjectFAQ[];
@@ -292,22 +314,94 @@ const PROJECT_DATA: Project[] = [
         width: 1211,
         height: 768,
       },
+      {
+        url: madinaMallExteriorRender,
+        title: 'Madinah Mall exterior render',
+        caption: 'Exterior render of Madinah Mall & Residency.',
+        width: 2600,
+        height: 2072,
+      },
+    ],
+    sitePlan: [
+      {
+        url: madinaMallSitePlan,
+        title: 'Madinah Mall site plan',
+        caption: 'Site plan showing the layout of Madinah Mall & Residency.',
+        width: 2600,
+        height: 2072,
+      },
     ],
     realPhotos: [],
-    floorPlans: [
+    floorPlanGroups: [
       {
-        url: madinahGroundFloorPlan,
-        title: 'Madinah Mall ground floor plan',
-        caption: 'Ground floor layout.',
-        width: 1151,
-        height: 768,
+        id: 'ground-floor',
+        label: 'Ground Floor',
+        images: [
+          {
+            url: madinahGroundFloorPlan,
+            title: 'Madinah Mall ground floor plan, existing 2D layout',
+            caption: 'Ground Floor - Existing 2D Plan',
+            width: 1151,
+            height: 768,
+          },
+          ...[madinaMallGroundFloorPlan1, madinaMallGroundFloorPlan2, madinaMallGroundFloorPlan3].map(
+            (url, index) => ({
+              url,
+              title: `Madinah Mall ground floor plan, view ${index + 1}`,
+              caption: `Ground Floor - View ${index + 1}`,
+              width: 2600,
+              height: 2077,
+            })
+          ),
+        ],
       },
       {
-        url: madinahFirstFloorPlan,
-        title: 'Madinah Mall first floor plan',
-        caption: 'First floor layout.',
-        width: 1151,
-        height: 768,
+        id: 'first-floor',
+        label: 'First Floor',
+        images: [
+          {
+            url: madinahFirstFloorPlan,
+            title: 'Madinah Mall first floor plan, existing 2D layout',
+            caption: 'First Floor - Existing 2D Plan',
+            width: 1151,
+            height: 768,
+          },
+          ...[madinaMallFirstFloorPlan1, madinaMallFirstFloorPlan2, madinaMallFirstFloorPlan3].map(
+            (url, index) => ({
+              url,
+              title: `Madinah Mall first floor plan, view ${index + 1}`,
+              caption: `First Floor - View ${index + 1}`,
+              width: 2600,
+              height: 2077,
+            })
+          ),
+        ],
+      },
+      {
+        id: 'second-floor',
+        label: 'Second Floor',
+        images: [madinaMallSecondFloorPlan1, madinaMallSecondFloorPlan2, madinaMallSecondFloorPlan3].map(
+          (url, index) => ({
+            url,
+            title: `Madinah Mall second floor plan, view ${index + 1}`,
+            caption: `Second Floor - View ${index + 1}`,
+            width: 2600,
+            height: 2077,
+          })
+        ),
+      },
+      {
+        id: 'apartment-floors',
+        label: 'Apartment Floors',
+        images: [madinaMallApartmentFloorPlan1, madinaMallApartmentFloorPlan2, madinaMallApartmentFloorPlan3].map(
+          (url, index) => ({
+            url,
+            title: `Madinah Mall apartment floor plan, view ${index + 1}`,
+            caption: `Apartment Floors - View ${index + 1}`,
+            width: 2600,
+            height: 2077,
+          })
+        ),
       },
     ],
     locationDetails: {

@@ -90,10 +90,6 @@ export const INDIGO_WALK_BRANDS: ProjectBrand[] = [
   { name: 'UBL Bank', logo: 'ubl-bank', show: true },
   { name: 'Jalal Sons', logo: 'jalal-sons', show: true },
   { name: 'Sweet Creme', logo: 'sweet-creme', show: true },
-  { name: 'Sapphire', logo: 'sapphire', show: true },
-  { name: 'Zara', logo: 'zara', show: true },
-  { name: 'Cambridge', logo: 'cambridge', show: true },
-  { name: 'Khaadi', logo: 'khaadi', show: true },
 ];
 
 export interface ProjectChapter {

@@ -282,7 +282,11 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({
             {project.gallery.map((img, idx) => (
               <div
                 key={idx}
-                className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-black border border-white/10 cursor-pointer shadow-lg hover:border-[#E10600]/60 transition-all duration-300"
+                className={`group relative aspect-[4/3] rounded-2xl overflow-hidden bg-black ${
+                  project.id === 'indigo-walk'
+                    ? 'border-0'
+                    : 'border border-white/10 hover:border-[#E10600]/60'
+                } cursor-pointer shadow-lg transition-all duration-300`}
               >
                 <img
                   src={img.url}

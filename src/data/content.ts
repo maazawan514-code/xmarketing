@@ -16,8 +16,6 @@ import madinahGroundFloorPlan from '../assets/images/madinah-mall/madinah-mall-g
 import madinahFirstFloorPlan from '../assets/images/madinah-mall/madinah-mall-first-floor-plan.jpg';
 import indigoWalkImage from '../assets/images/indigo_walk_commercial_1790698931457.jpg';
 import indigoAtriumImage from '../assets/images/indigo_walk_atrium_1790758568890.jpg';
-import madinaMallAerial from '/images/madina-mall/madina-mall-aerial.jpg';
-import madinaMallTower from '/images/madina-mall/madina-mall-tower.jpg';
 
 export const COMPANY = {
   name: 'X Marketing',
@@ -293,20 +291,6 @@ const PROJECT_DATA: Project[] = [
         caption: 'Closer front view highlighting the building entrance and retail frontage.',
         width: 1211,
         height: 768,
-      },
-      {
-        url: madinaMallAerial,
-        title: 'Madina Mall & Residency aerial development view',
-        caption: 'Aerial view of the Madina Mall & Residency development.',
-        width: 1278,
-        height: 720,
-      },
-      {
-        url: madinaMallTower,
-        title: 'Madina Mall & Residency tower exterior',
-        caption: 'Exterior tower view of Madina Mall & Residency.',
-        width: 1278,
-        height: 720,
       },
     ],
     realPhotos: [],

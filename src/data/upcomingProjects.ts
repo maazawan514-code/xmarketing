@@ -56,7 +56,7 @@ export const UPCOMING_PROJECTS: UpcomingProject[] = [
         heading: 'Utilities',
         items: [
           'WAPDA electricity; own arrangement planned in future.',
-          'Metered water. Gas is not available.',
+          'Metered water.',
         ],
       },
       {

@@ -93,11 +93,7 @@ export const INDIGO_WALK_BRANDS: ProjectBrand[] = [
   { name: 'Sapphire', logo: 'sapphire', show: true },
   { name: 'Zara', logo: 'zara', show: true },
   { name: 'Cambridge', logo: 'cambridge', show: true },
-  { name: 'Lama', logo: 'lama', show: true },
   { name: 'Khaadi', logo: 'khaadi', show: true },
-  { name: "Levi's", logo: 'levis', show: true },
-  { name: "Gloria Jean's Coffees", logo: 'gloria-jeans', show: true },
-  { name: 'Ethnic', logo: 'ethnic', show: true },
 ];
 
 export interface ProjectChapter {

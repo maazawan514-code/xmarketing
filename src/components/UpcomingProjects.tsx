@@ -95,7 +95,7 @@ export const UpcomingProjects: React.FC = () => {
             className="relative isolate scroll-mt-24 overflow-hidden border border-white/10 bg-[#101010]"
           >
             <AmbientVideo src={project.video} poster={project.poster} label={`${project.title} background`} />
-            <div className="absolute inset-0 -z-10 bg-black/80" />
+            <div className="absolute inset-0 -z-10 bg-black/90 sm:bg-black/80" />
             <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#E10600]/15 via-transparent to-black/50" />
 
             <div className="p-5 sm:p-8 lg:p-12">
@@ -127,28 +127,35 @@ export const UpcomingProjects: React.FC = () => {
                 ))}
               </div>
 
-              <div data-upcoming-reveal className="grid gap-8 border-b border-white/15 py-8 lg:grid-cols-[1.3fr_1fr]">
+              <div data-upcoming-reveal className="grid gap-6 border-b border-white/15 py-7 sm:gap-8 sm:py-8 lg:grid-cols-[1.3fr_1fr]">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#FF2A2A]">Project overview</p>
-                  <p className="mt-3 max-w-3xl text-sm leading-7 text-neutral-200">{project.type}</p>
+                  <p className="mt-3 max-w-3xl text-sm leading-7 text-neutral-100">{project.type}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:pb-0">
                   {project.gallery.map((image) => (
-                    <img
+                    <figure
                       key={image.src}
-                      src={image.src}
-                      alt={image.alt}
-                      data-lightbox
-                      data-lightbox-group={project.id}
-                      data-lightbox-title={image.alt}
-                      data-lightbox-caption={project.tagline}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`Open image: ${image.alt}`}
-                      loading="lazy"
-                      decoding="async"
-                      className="aspect-[4/3] h-full w-full object-cover"
-                    />
+                      className="group min-w-[86%] snap-start overflow-hidden rounded-xl border border-white/10 bg-[#090909] sm:min-w-0"
+                    >
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        data-lightbox
+                        data-lightbox-group={project.id}
+                        data-lightbox-title={image.alt}
+                        data-lightbox-caption={project.tagline}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Open image: ${image.alt}`}
+                        loading="lazy"
+                        decoding="async"
+                        className="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <figcaption className="border-t border-white/10 px-3 py-2.5 text-xs leading-relaxed text-neutral-300">
+                        {image.alt}
+                      </figcaption>
+                    </figure>
                   ))}
                 </div>
               </div>

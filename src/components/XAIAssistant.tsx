@@ -198,10 +198,10 @@ export const XAIAssistant: React.FC = () => {
         aria-label="Open X AI Assistant chat"
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="fixed bottom-6 right-24 z-50 inline-flex h-14 items-center gap-2 rounded-full border border-[#FF2A2A]/60 bg-[#111111] px-4 text-sm font-semibold text-white shadow-[0_8px_30px_rgba(225,6,0,0.28)] transition-all hover:scale-105 hover:bg-[#E10600] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2A2A]"
+        className="fixed bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] right-[4.25rem] z-50 inline-flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-[#FF2A2A]/60 bg-[#111111] px-0 text-sm font-semibold text-white shadow-[0_8px_30px_rgba(225,6,0,0.28)] transition-all hover:scale-105 hover:bg-[#E10600] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2A2A] md:bottom-6 md:right-24 md:h-14 md:w-auto md:justify-start md:px-4"
       >
         <MessageCircle className="h-5 w-5 text-[#FF2A2A]" aria-hidden="true" />
-        <span className="hidden sm:inline">X AI Assistant</span>
+        <span className="hidden md:inline">X AI Assistant</span>
       </button>
 
       {isOpen && (

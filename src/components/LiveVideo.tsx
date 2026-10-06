@@ -41,6 +41,7 @@ const getVideoSource = (value: string): VideoSource => {
 export const LiveVideo: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [videoUnavailable, setVideoUnavailable] = useState(false);
   const videoSource = getVideoSource(LIVE_VIDEO_URL);
 
   useEffect(() => {
@@ -92,13 +93,18 @@ export const LiveVideo: React.FC = () => {
             <div className="flex h-full items-center justify-center text-sm text-neutral-400">
               Video URL is not supported.
             </div>
+          ) : isVisible && videoSource.kind === 'mp4' && videoUnavailable ? (
+            <div className="flex h-full items-center justify-center text-sm text-neutral-400" role="status">
+              Video unavailable.
+            </div>
           ) : isVisible && videoSource.kind === 'mp4' ? (
             <video
               src={videoSource.src}
               controls
               playsInline
-              preload="none"
+              preload="metadata"
               aria-label={LIVE_VIDEO_TITLE}
+              onError={() => setVideoUnavailable(true)}
               className="h-full w-full object-contain"
             />
           ) : isVisible ? (

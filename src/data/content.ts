@@ -81,13 +81,23 @@ export interface ProjectRealPhoto extends ProjectGalleryItem {
 
 export interface ProjectBrand {
   name: string;
-  logo?: string;
+  logo: string;
+  url?: string;
+  show: boolean;
 }
 
 export const INDIGO_WALK_BRANDS: ProjectBrand[] = [
-  { name: 'UBL Bank' },
-  { name: 'Jalal Sons' },
-  { name: 'Ice Cream & Sweets' },
+  { name: 'UBL Bank', logo: 'ubl-bank', show: true },
+  { name: 'Jalal Sons', logo: 'jalal-sons', show: true },
+  { name: 'Sweet Creme', logo: 'sweet-creme', show: true },
+  { name: 'Sapphire', logo: 'sapphire', show: true },
+  { name: 'Zara', logo: 'zara', show: true },
+  { name: 'Cambridge', logo: 'cambridge', show: true },
+  { name: 'Lama', logo: 'lama', show: true },
+  { name: 'Khaadi', logo: 'khaadi', show: true },
+  { name: "Levi's", logo: 'levis', show: true },
+  { name: "Gloria Jean's Coffees", logo: 'gloria-jeans', show: true },
+  { name: 'Ethnic', logo: 'ethnic', show: true },
 ];
 
 export interface ProjectChapter {

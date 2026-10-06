@@ -11,7 +11,7 @@ PROJECT 1: INDIGO WALK (Upcoming project)
 - Parking: basement parking included.
 - Estimated completion: approximately 4 years.
 - Developer: Indigo group. Track record: Indigo Canal Forts (completed project), Indigo Country Farms (ongoing project), New Amir Town (ongoing project). Indigo Walk is the group's new high-rise building project.
-- Brands planned: UBL Bank, Jalal Sons, and an ice cream / sweets brand (name to be confirmed).
+- Planned brands, subject to change: UBL Bank, Jalal Sons, Sweet Creme, Sapphire, Zara, Cambridge, Lama, Khaadi, Levi's, Gloria Jean's Coffees and Ethnic.
 - Utilities: electricity through a WAPDA connection (the project's own arrangement is planned in the future), metered water system, gas not available.
 - Good for: retailers, brands, cafes and investors.
 - Note: images are artist's impressions and specifications can change.

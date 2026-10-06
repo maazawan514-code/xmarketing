@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Volume2, VolumeX } from 'lucide-react';
 
 const LIVE_VIDEO_URL = '/videos/live-video.mp4';
 const LIVE_VIDEO_TITLE = 'X Marketing live video';
@@ -40,7 +41,9 @@ const getVideoSource = (value: string): VideoSource => {
 
 export const LiveVideo: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [videoUnavailable, setVideoUnavailable] = useState(false);
   const videoSource = getVideoSource(LIVE_VIDEO_URL);
 
@@ -88,7 +91,7 @@ export const LiveVideo: React.FC = () => {
           </span>
         </div>
 
-        <div className="aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_0_32px_rgba(225,6,0,0.15)]">
+        <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_0_32px_rgba(225,6,0,0.15)]">
           {!videoSource ? (
             <div className="flex h-full items-center justify-center text-sm text-neutral-400">
               Video URL is not supported.
@@ -99,9 +102,10 @@ export const LiveVideo: React.FC = () => {
             </div>
           ) : isVisible && videoSource.kind === 'mp4' ? (
             <video
+              ref={videoRef}
               src={videoSource.src}
               autoPlay
-              muted
+              muted={isMuted}
               loop
               playsInline
               preload="metadata"
@@ -122,6 +126,21 @@ export const LiveVideo: React.FC = () => {
             <div className="flex h-full items-center justify-center text-sm text-neutral-400">
               Video will load when you scroll here.
             </div>
+          )}
+          {isVisible && videoSource?.kind === 'mp4' && !videoUnavailable && (
+            <button
+              type="button"
+              onClick={() => {
+                const nextMuted = !isMuted;
+                if (videoRef.current) videoRef.current.muted = nextMuted;
+                setIsMuted(nextMuted);
+              }}
+              aria-label={isMuted ? 'Enable video sound' : 'Mute video sound'}
+              className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/75 px-3 py-2 text-xs font-semibold text-white shadow-lg backdrop-blur transition-colors hover:border-[#FF2A2A] hover:bg-[#E10600]"
+            >
+              {isMuted ? <Volume2 className="h-4 w-4" aria-hidden="true" /> : <VolumeX className="h-4 w-4" aria-hidden="true" />}
+              {isMuted ? 'Enable sound' : 'Mute'}
+            </button>
           )}
         </div>
       </div>

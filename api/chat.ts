@@ -256,6 +256,15 @@ const extractOpenAIText = (data: unknown) => {
 };
 
 const extractGeminiText = (data: unknown) => {
+  if (isRecord(data) && Array.isArray(data.steps)) {
+    return data.steps
+      .filter((step): step is Record<string, unknown> => isRecord(step) && step.type === 'model_output' && Array.isArray(step.content))
+      .flatMap((step) => step.content as unknown[])
+      .filter((part): part is Record<string, unknown> => isRecord(part) && typeof part.text === 'string')
+      .map((part) => String(part.text))
+      .join('\n')
+      .trim();
+  }
   if (!isRecord(data) || !Array.isArray(data.candidates)) return '';
   const candidate = data.candidates[0];
   if (!isRecord(candidate)) return '';
@@ -272,7 +281,7 @@ const getLlmConfig = () => {
   const hasGeminiKey = Boolean(process.env.GEMINI_API_KEY);
   const provider = (process.env.LLM_PROVIDER || (hasGeminiKey ? 'google' : 'anthropic')).toLocaleLowerCase();
   const apiKey = process.env.LLM_API_KEY || process.env.GEMINI_API_KEY;
-  const model = process.env.LLM_MODEL || (provider === 'google' || provider === 'gemini' ? 'gemini-2.0-flash' : 'claude-sonnet-4-20250514');
+  const model = process.env.LLM_MODEL || (provider === 'google' || provider === 'gemini' ? 'gemini-3.8-flash' : 'claude-sonnet-4-20250514');
   return { provider, apiKey, model };
 };
 
@@ -289,7 +298,46 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
     const isOpenAI = provider === 'openai';
     if (!isAnthropic && !isOpenAI && !isGoogle) throw new Error('Unsupported language model provider');
 
-    let response: Response;
+    let response: Response | undefined;
+    const requestGemini = async (geminiModel: string, timeoutMs: number) => {
+      const geminiController = new AbortController();
+      const geminiTimeout = setTimeout(() => geminiController.abort(), timeoutMs);
+      try {
+        const response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-goog-api-key': apiKey,
+          },
+          body: JSON.stringify({
+            model: geminiModel,
+            system_instruction: system,
+            input: messages
+              .map((message) => `${message.role === 'assistant' ? 'Assistant' : 'User'}: ${message.content}`)
+              .join('\n\n'),
+            generation_config: {
+              max_output_tokens: geminiModel === 'gemini-3.5-flash' ? 800 : MAX_OUTPUT_TOKENS,
+              thinking_level: 'low',
+            },
+          }),
+          signal: geminiController.signal,
+        });
+        if (!response.ok) {
+          const details = (await response.text()).slice(0, 500);
+          throw new Error(`Gemini model request failed with status ${response.status}: ${details}`);
+        }
+        if (response.ok) {
+          const interaction: unknown = await response.clone().json();
+          if (isRecord(interaction) && interaction.status !== 'completed') {
+            throw new Error(`Gemini interaction did not complete (status: ${String(interaction.status)})`);
+          }
+        }
+        return response;
+      } finally {
+        clearTimeout(geminiTimeout);
+      }
+    };
+
     if (isAnthropic) {
       response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -321,26 +369,38 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
         signal: controller.signal,
       });
     } else {
-      const geminiModel = model.startsWith('models/') ? model : `models/${model}`;
-      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${geminiModel}:generateContent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-goog-api-key': apiKey,
-        },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: system }] },
-          generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS },
-          contents: messages.map((message) => ({
-            role: message.role === 'assistant' ? 'model' : 'user',
-            parts: [{ text: message.content }],
-          })),
-        }),
-        signal: controller.signal,
-      });
+      const geminiModel = model.replace(/^models\//, '');
+      try {
+        response = await requestGemini(geminiModel, 10_000);
+      } catch (error) {
+        const isRetryable = (failure: unknown) =>
+          failure instanceof Error
+          && (failure.name === 'AbortError'
+            || /status (429|500|502|503|504)\b/.test(failure.message)
+            || failure.message.includes('Gemini interaction did not complete'));
+        if (!isRetryable(error)) throw error;
+
+        let lastError: unknown = error;
+        for (const fallbackModel of ['gemini-3.5-flash', 'gemini-3.1-flash-lite']) {
+          console.warn(`Gemini model unavailable; retrying with ${fallbackModel}.`);
+          try {
+            response = await requestGemini(fallbackModel, 12_000);
+            lastError = undefined;
+            break;
+          } catch (fallbackError) {
+            lastError = fallbackError;
+            if (!isRetryable(fallbackError)) throw fallbackError;
+          }
+        }
+        if (lastError) throw lastError;
+      }
     }
 
-    if (!response.ok) throw new Error('Language model request failed');
+    if (!response) throw new Error('Language model did not return a response');
+    if (!response.ok) {
+      const details = (await response.text()).slice(0, 500);
+      throw new Error(`Language model request failed with status ${response.status}: ${details}`);
+    }
     const data: unknown = await response.json();
     const answer = isAnthropic ? extractAnthropicText(data) : isOpenAI ? extractOpenAIText(data) : extractGeminiText(data);
     if (!answer) throw new Error('Language model returned no answer');
@@ -430,7 +490,8 @@ export default async function handler(request: ChatRequest, response: ServerResp
         whatsappUrl: buildWhatsAppUrl(),
         redirectToWhatsApp: false,
       } satisfies ChatResponse);
-    } catch {
+    } catch (error) {
+      console.error('X AI assistant provider request failed:', error);
       sendJson(response, 503, errorResponse());
     }
   } catch {

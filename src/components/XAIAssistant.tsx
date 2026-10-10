@@ -4,7 +4,8 @@ import { XLogo } from './XLogo';
 
 const CHAT_ENDPOINT = '/api/chat';
 const MAX_MESSAGE_LENGTH = 500;
-const MAX_CONTEXT_MESSAGES = 10;
+const MAX_CONTEXT_MESSAGES = 16;
+const MAX_VISIBLE_MESSAGES = 17;
 const QUICK_REPLIES = ['Indigo Walk', 'Madina Mall & Residency', 'Locations', 'Talk on WhatsApp'];
 const GREETING = 'Assalam o Alaikum! I am X AI Assistant. Ask me anything about our projects, locations, units and developers.';
 
@@ -152,7 +153,7 @@ export const XAIAssistant: React.FC = () => {
     const content = messageText.trim();
     if (!content || isLoading || content.length > MAX_MESSAGE_LENGTH) return;
 
-    const nextMessages = [...messages, { role: 'user' as const, content }].slice(-11);
+    const nextMessages = [...messages, { role: 'user' as const, content }].slice(-MAX_VISIBLE_MESSAGES);
     setMessages(nextMessages);
     setInput('');
     setIsLoading(true);
@@ -176,14 +177,14 @@ export const XAIAssistant: React.FC = () => {
         content: data.text || 'The assistant is temporarily unavailable. Please contact our team on WhatsApp.',
         ...(data.redirectToWhatsApp && data.whatsappUrl ? { whatsappUrl: data.whatsappUrl } : {}),
       };
-      setMessages((current) => [...current, assistantMessage].slice(-11));
+      setMessages((current) => [...current, assistantMessage].slice(-MAX_VISIBLE_MESSAGES));
     } catch {
       const assistantMessage: Message = {
         role: 'assistant',
         content: 'The assistant is temporarily unavailable. Please contact our team on WhatsApp.',
         ...(whatsappUrl ? { whatsappUrl } : {}),
       };
-      setMessages((current) => [...current, assistantMessage].slice(-11));
+      setMessages((current) => [...current, assistantMessage].slice(-MAX_VISIBLE_MESSAGES));
     } finally {
       setIsLoading(false);
     }

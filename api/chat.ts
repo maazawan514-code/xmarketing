@@ -255,10 +255,29 @@ const extractOpenAIText = (data: unknown) => {
   return choice.message.content.trim();
 };
 
+const extractGeminiText = (data: unknown) => {
+  if (!isRecord(data) || !Array.isArray(data.candidates)) return '';
+  const candidate = data.candidates[0];
+  if (!isRecord(candidate)) return '';
+  const content = candidate.content as Record<string, unknown> | undefined;
+  const parts = Array.isArray(content?.parts) ? content.parts : [];
+  return parts
+    .filter((part: unknown): part is Record<string, unknown> => isRecord(part) && typeof part.text === 'string')
+    .map((part) => String(part.text))
+    .join('\n')
+    .trim();
+};
+
+const getLlmConfig = () => {
+  const hasGeminiKey = Boolean(process.env.GEMINI_API_KEY);
+  const provider = (process.env.LLM_PROVIDER || (hasGeminiKey ? 'google' : 'anthropic')).toLocaleLowerCase();
+  const apiKey = process.env.LLM_API_KEY || process.env.GEMINI_API_KEY;
+  const model = process.env.LLM_MODEL || (provider === 'google' || provider === 'gemini' ? 'gemini-2.0-flash' : 'claude-sonnet-4-20250514');
+  return { provider, apiKey, model };
+};
+
 const callLanguageModel = async (messages: ChatMessage[]) => {
-  const apiKey = process.env.LLM_API_KEY;
-  const provider = (process.env.LLM_PROVIDER || 'anthropic').toLocaleLowerCase();
-  const model = process.env.LLM_MODEL || 'claude-sonnet-4-20250514';
+  const { provider, apiKey, model } = getLlmConfig();
   if (!apiKey) throw new Error('Language model is not configured');
 
   const controller = new AbortController();
@@ -266,38 +285,64 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
   try {
     const system = createSystemPrompt();
     const isAnthropic = provider === 'anthropic';
-    if (!isAnthropic && provider !== 'openai') throw new Error('Unsupported language model provider');
+    const isGoogle = provider === 'google' || provider === 'gemini';
+    const isOpenAI = provider === 'openai';
+    if (!isAnthropic && !isOpenAI && !isGoogle) throw new Error('Unsupported language model provider');
 
-    const response = await fetch(
-      isAnthropic ? 'https://api.anthropic.com/v1/messages' : 'https://api.openai.com/v1/chat/completions',
-      {
+    let response: Response;
+    if (isAnthropic) {
+      response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: isAnthropic
-          ? {
-              'anthropic-version': '2023-06-01',
-              'content-type': 'application/json',
-              'x-api-key': apiKey,
-            }
-          : {
-              authorization: `Bearer ${apiKey}`,
-              'content-type': 'application/json',
-            },
-        body: JSON.stringify(
-          isAnthropic
-            ? { model, max_tokens: MAX_OUTPUT_TOKENS, system, messages }
-            : {
-                model,
-                max_completion_tokens: MAX_OUTPUT_TOKENS,
-                messages: [{ role: 'system', content: system }, ...messages],
-              }
-        ),
+        headers: {
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'x-api-key': apiKey,
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: MAX_OUTPUT_TOKENS,
+          system,
+          messages,
+        }),
         signal: controller.signal,
-      }
-    );
+      });
+    } else if (isOpenAI) {
+      response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: MAX_OUTPUT_TOKENS,
+          messages: [{ role: 'system', content: system }, ...messages],
+        }),
+        signal: controller.signal,
+      });
+    } else {
+      const geminiModel = model.startsWith('models/') ? model : `models/${model}`;
+      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${geminiModel}:generateContent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-goog-api-key': apiKey,
+        },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: system }] },
+          generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS },
+          contents: messages.map((message) => ({
+            role: message.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: message.content }],
+          })),
+        }),
+        signal: controller.signal,
+      });
+    }
 
     if (!response.ok) throw new Error('Language model request failed');
     const data: unknown = await response.json();
-    const answer = isAnthropic ? extractAnthropicText(data) : extractOpenAIText(data);
+    const answer = isAnthropic ? extractAnthropicText(data) : isOpenAI ? extractOpenAIText(data) : extractGeminiText(data);
     if (!answer) throw new Error('Language model returned no answer');
     return answer;
   } finally {

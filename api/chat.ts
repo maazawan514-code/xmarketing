@@ -19,66 +19,6 @@ const rateLimits = new Map<string, { startedAt: number; count: number }>();
 const GEMINI_DEFAULT_MODEL = 'gemini-3.8-flash';
 const GEMINI_FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.1-flash-lite'];
 
-const PRICING_INTENT_KEYWORDS: Array<{ term: string; romanUrdu?: boolean }> = [
-  { term: 'price' },
-  { term: 'pricing' },
-  { term: 'rate' },
-  { term: 'rates' },
-  { term: 'cost' },
-  { term: 'how much' },
-  { term: 'kitna', romanUrdu: true },
-  { term: 'kitne', romanUrdu: true },
-  { term: 'kitni', romanUrdu: true },
-  { term: 'qeemat', romanUrdu: true },
-  { term: 'qimat', romanUrdu: true },
-  { term: 'kimat', romanUrdu: true },
-  { term: 'rate kya', romanUrdu: true },
-  { term: 'payment plan' },
-  { term: 'payment' },
-  { term: 'installment' },
-  { term: 'instalment' },
-  { term: 'book' },
-  { term: 'reservation' },
-  { term: 'qist', romanUrdu: true },
-  { term: 'qisht', romanUrdu: true },
-  { term: 'down payment' },
-  { term: 'booking', romanUrdu: true },
-  { term: 'booking amount' },
-  { term: 'بکنگ' },
-  { term: 'advance' },
-  { term: 'budget' },
-  { term: 'monthly' },
-  { term: 'discount' },
-  { term: 'paisay', romanUrdu: true },
-  { term: 'paise', romanUrdu: true },
-  { term: 'lakh' },
-  { term: 'crore' },
-  { term: 'قیمت' },
-  { term: 'قیمت کیا' },
-  { term: 'کتنا' },
-  { term: 'کتنے' },
-  { term: 'کتنی' },
-  { term: 'ادائیگی' },
-  { term: 'بجٹ' },
-  { term: 'قسط' },
-  { term: 'اقساط' },
-  { term: 'ڈاؤن پیمنٹ' },
-  { term: 'ایڈوانس' },
-  { term: 'ماہانہ' },
-  { term: 'ڈسکاؤنٹ' },
-  { term: 'پیسے' },
-  { term: 'لاکھ' },
-  { term: 'کروڑ' },
-  { term: 'قیمتوں' },
-  { term: 'ریٹ' },
-  { term: 'لاگت' },
-  { term: 'رقم' },
-  { term: 'بکنگ رقم' },
-  { term: 'بکنگ' },
-  { term: 'پیشگی' },
-  { term: 'ماہانہ قسط' },
-];
-
 type ChatMessage = {
   role: 'user' | 'assistant';
   content: string;
@@ -92,21 +32,37 @@ type ChatResponse = {
   redirectToWhatsApp: boolean;
 };
 
+const GENERAL_PROJECT_INFORMATION = KNOWLEDGE_BASE
+  .split(/^## (?:INDIGO WALK|MADINA MALL & RESIDENCY)\s*$/im)[0]
+  .trim();
+
+const getProjectKnowledgeBlock = (projectName: 'INDIGO WALK' | 'MADINA MALL & RESIDENCY') => {
+  const heading = `## ${projectName}`;
+  const start = KNOWLEDGE_BASE.indexOf(heading);
+  if (start < 0) throw new Error(`Project knowledge block is missing: ${projectName}`);
+  const contentStart = start + heading.length;
+  const nextHeading = KNOWLEDGE_BASE.indexOf('\n## ', contentStart);
+  return KNOWLEDGE_BASE.slice(contentStart, nextHeading < 0 ? undefined : nextHeading).trim();
+};
+
+const INDIGO_WALK_KNOWLEDGE = getProjectKnowledgeBlock('INDIGO WALK');
+const MADINA_MALL_KNOWLEDGE = getProjectKnowledgeBlock('MADINA MALL & RESIDENCY');
+
 const SYSTEM_PROMPT = `You are "X AI Assistant" for X Marketing, a real estate marketing company in Lahore, Pakistan.
 
 RULES:
 
-1. Answer every question about our projects, locations, unit sizes, prices, payment plans, developers and amenities using ONLY the PROJECT DATA below. Give full, helpful details.
-2. If the user asks "tell me about <project>", give a complete overview (location, type, developer, sizes, special features, price range, payment plan summary) and then offer more details (e.g. specific floor, shop, or installment).
-3. For a specific shop/apartment, look it up in the tables and give size, rate per sq ft, total price, booking amount, confirmation amount, monthly installment, half-yearly payment and possession amount.
-4. Prices are in PKR. Convert to readable form (e.g. 49,307,500 = 4.93 crore). Sizes for Madina Mall are in square feet; Indigo Walk units are in marla.
-5. If something is not in PROJECT DATA (exact address of Madina Mall, completion date, NOC/approvals, etc.) say you don't have that detail and suggest chatting with the team on WhatsApp. Never make up information.
-6. Always add: prices and plans are subject to change; the team will confirm latest rates on WhatsApp.
-7. Reply in the same language as the user (English or Roman Urdu). Keep answers clear and not too long; use short lists when comparing.
-8. When the user wants to book, visit, or negotiate, send them to WhatsApp.
+1. Answer project questions using ONLY the project information supplied below. Never invent missing details.
+2. Give full helpful details for project overviews, including location, type, developer, size range, price range, key features, and payment-plan summary when supplied.
+3. For a specific shop/apartment, provide the table's size, rate per sq ft, total price, booking, confirmation (or On Ground Breaking), monthly installment, half-yearly payment, and possession amount. Preserve full payment advance-only terms where listed.
+4. If the user asks about a Madina Mall shop number without specifying its floor (for example, "9A" or "shop 5"), ask which floor they mean (ground, first, or second) before giving any price. Never guess the floor.
+5. Prices are in PKR. Convert large values to readable lakh/crore amounts without changing the values.
+6. Always state that prices and plans are subject to change.
+7. For booking, negotiation, site visits, or requested facts not in the supplied information, direct the user to the team on WhatsApp. Do not say WhatsApp is needed just to answer prices or installment questions present in the tables.
+8. Reply in the same language as the user (English or Roman Urdu). Keep answers clear and concise.
 
-PROJECT DATA:
-{{KNOWLEDGE_BASE}}
+ALWAYS-INCLUDED PROJECT SUMMARIES AND GENERAL RULES:
+${GENERAL_PROJECT_INFORMATION}
 
 Company WhatsApp: {{WHATSAPP_URL}}`;
 
@@ -132,28 +88,6 @@ const getWhatsAppNumber = () => {
 const buildWhatsAppUrl = (message = '') => {
   const baseUrl = `https://wa.me/${getWhatsAppNumber()}`;
   return message ? `${baseUrl}?text=${encodeURIComponent(message)}` : baseUrl;
-};
-
-const isPricingIntent = (message: string) => {
-  const normalized = message.toLocaleLowerCase().replace(/\s+/g, ' ').trim();
-  return PRICING_INTENT_KEYWORDS.some(({ term }) => {
-    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
-    const boundaries = /^[a-z0-9]/i.test(term) && /[a-z0-9]$/i.test(term)
-      ? `\\b${escaped}\\b`
-      : escaped;
-    return new RegExp(boundaries, 'i').test(normalized);
-  });
-};
-
-const isLeadBudgetBandAnswer = (messages: ChatMessage[]) => {
-  if (messages.length < 2) return false;
-  const lastAssistantMessage = [...messages]
-    .reverse()
-    .find((message) => message.role === 'assistant')
-    ?.content;
-  if (!lastAssistantMessage || !/\bupfront budget\b|\bbudget\b|بجٹ/i.test(lastAssistantMessage)) return false;
-
-  return Boolean(getLeadBudgetBand(messages[messages.length - 1].content));
 };
 
 const getLeadBudgetBand = (message: string) => {
@@ -216,51 +150,39 @@ const getCompletedLeadSummary = (messages: ChatMessage[]) => {
   return `LEAD SUMMARY: Name: ${name} | City/Country: ${city} | Interest: ${interest} | Upfront budget: ${budget} | Role: ${role} | Timeline: ${timeline} | Phone: ${normalizedPhone}`;
 };
 
-const isRomanUrduPricingIntent = (message: string) => {
-  const normalized = message.toLocaleLowerCase().replace(/\s+/g, ' ').trim();
-  const hasRomanUrduPricingTerm = PRICING_INTENT_KEYWORDS.some(({ term, romanUrdu }) => {
-    if (!romanUrdu) return false;
-    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
-    return new RegExp(`\\b${escaped}\\b`, 'i').test(normalized);
-  });
-  return hasRomanUrduPricingTerm
-    || /\b(?:price|pricing|rate|payment|installment|instalment|cost|booking|book|reserve|reservation)\s+(?:kya|karna|karni|chahiye|hai)\b/i.test(normalized);
-};
-
 const findProjectName = (messages: ChatMessage[]) => {
   const conversation = messages
     .filter((message) => message.role === 'user')
     .map((message) => message.content)
     .join(' ')
     .toLocaleLowerCase();
-  const projectNames = Array.from(
-    KNOWLEDGE_BASE.matchAll(/^PROJECT\s+\d+:\s*(.+?)\s*(?:\([^)]*\))?$/gim),
-    (match) => match[1].trim()
-  );
-  return projectNames.find((name) => {
-    const searchableName = name.split('&')[0].trim().toLocaleLowerCase();
-    return searchableName.length > 2 && conversation.includes(searchableName);
-  });
+  if (/\bmadina(?:\s+mall(?:\s*(?:&|and)\s*residency)?)?\b/i.test(conversation)) {
+    return 'Madina Mall & Residency';
+  }
+  if (/\bindigo(?:\s+walk)?\b/i.test(conversation)) return 'Indigo Walk';
+  return undefined;
 };
 
-const getRedirectText = (message: string, projectName?: string) => {
-  const projectSuffix = projectName ? ` for ${projectName}` : '';
-  if (/[\u0600-\u06ff]/.test(message)) {
-    return 'قیمت، بکنگ اور ادائیگی کی تفصیلات کے لیے براہِ کرم ہماری ٹیم سے واٹس ایپ پر رابطہ کریں؛ بکنگ کے بعد تصدیقی ادائیگی ہوتی ہے۔ تفصیلات تبدیل ہو سکتی ہیں۔';
-  }
-  if (isRomanUrduPricingIntent(message)) {
-    return `Qeemat, booking aur payment plans${projectSuffix} ki taza tafseelat ke liye WhatsApp par rabta karein. Booking ke baad confirmation payment hoti hai; tafseelat tabdeel ho sakti hain.`;
-  }
-  return `For the latest pricing, booking, and payment-plan details${projectSuffix}, please chat with our team directly on WhatsApp. A confirmation payment follows the booking amount; details are subject to change.`;
-};
+const isBookingVisitOrNegotiationIntent = (message: string) =>
+  /\b(?:book(?:\s+(?:it|this|the|a)\b)?|reserve|reservation|negotiate|negotiation|site visit|visit (?:the )?(?:site|project))\b/i.test(message)
+  || /\b(?:booking|book|reserve|visit|negotiate)\s+(?:karna|karni|chah(?:ta|ti))\b/i.test(message);
 
-const createSystemPrompt = () =>
-  SYSTEM_PROMPT
+const createSystemPrompt = (messages: ChatMessage[]) => {
+  const history = messages
+    .filter((message) => message.role === 'user')
+    .map((message) => message.content)
+    .join('\n')
+    .toLocaleLowerCase();
+  const projectDetails = [
+    /\bindigo(?:\s+walk)?\b/i.test(history) ? `## INDIGO WALK\n${INDIGO_WALK_KNOWLEDGE}` : '',
+    /\bmadina(?:\s+mall(?:\s*(?:&|and)\s*residency)?)?\b/i.test(history)
+      ? `## MADINA MALL & RESIDENCY\n${MADINA_MALL_KNOWLEDGE}`
+      : '',
+  ].filter(Boolean).join('\n\n');
+  return SYSTEM_PROMPT
     .replace('{{WHATSAPP_URL}}', buildWhatsAppUrl())
-    .replace('{{KNOWLEDGE_BASE}}', KNOWLEDGE_BASE);
-
-const hasProhibitedPricingOutput = (text: string) =>
-  /\bPKR\b|\bRs\.?\b|₨|\blakh\b|\bcrore\b|%|(?:\b\d{1,3}(?:,\d{3})+(?:\.\d+)?\b|\b\d{4,}(?:\.\d+)?\b)/i.test(text);
+    + (projectDetails ? `\n\nREQUESTED PROJECT DETAILS:\n${projectDetails}` : '');
+};
 
 const parseRequestBody = async (request: ChatRequest): Promise<unknown> => {
   if (request.body !== undefined) {
@@ -384,6 +306,12 @@ const isRetryableGeminiFailure = (failure: unknown) =>
     || /status (404|429|500|502|503|504)\b/.test(failure.message)
     || failure.message.includes('Gemini interaction did not complete'));
 
+const getGeminiFailureStatus = (failure: unknown) => {
+  if (!(failure instanceof Error)) return undefined;
+  const status = failure.message.match(/\bstatus (\d{3})\b/);
+  return status ? Number(status[1]) : undefined;
+};
+
 const callLanguageModel = async (messages: ChatMessage[]) => {
   const { provider, apiKey, model } = getLlmConfig();
   if (!apiKey) throw new Error('Language model is not configured (missing LLM_API_KEY)');
@@ -391,7 +319,7 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
-    const system = createSystemPrompt();
+    const system = createSystemPrompt(messages);
     const isAnthropic = provider === 'anthropic';
     const isGoogle = provider === 'google' || provider === 'gemini';
     const isOpenAI = provider === 'openai';
@@ -416,17 +344,36 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
               .map((message) => `${message.role === 'assistant' ? 'Assistant' : 'User'}: ${message.content}`)
               .join('\n\n'),
             generation_config: {
-              max_output_tokens: MAX_OUTPUT_TOKENS,
+              max_output_tokens: 2048,
               thinking_level: 'low',
             },
           }),
           signal: geminiController.signal,
         });
         if (!geminiResponse.ok) {
-          const details = (await geminiResponse.text()).slice(0, 500);
-          throw new Error(`Gemini model request failed with status ${geminiResponse.status} (model: ${geminiModel}): ${details}`);
+          const details = await geminiResponse.text();
+          if (geminiResponse.status === 429) {
+            let errorBody: unknown = details;
+            try {
+              errorBody = JSON.parse(details);
+            } catch {
+              errorBody = details;
+            }
+            const nestedError = isRecord(errorBody) && isRecord(errorBody.error)
+              ? errorBody.error
+              : errorBody;
+            console.error('Gemini API rate-limit error:', JSON.stringify(nestedError));
+          }
+          throw new Error(`Gemini model request failed with status ${geminiResponse.status} (model: ${geminiModel}): ${details.slice(0, 500)}`);
         }
         const interaction: unknown = await geminiResponse.clone().json();
+        if (isRecord(interaction) && isRecord(interaction.usage)
+          && typeof interaction.usage.total_input_tokens === 'number') {
+          console.info(`Gemini request usage (model: ${geminiModel}): total_input_tokens=${interaction.usage.total_input_tokens}`);
+        }
+        if (isRecord(interaction) && interaction.status === 'incomplete' && extractGeminiText(interaction)) {
+          return geminiResponse;
+        }
         if (isRecord(interaction) && interaction.status !== 'completed') {
           throw new Error(`Gemini interaction did not complete for model ${geminiModel} (status: ${String(interaction.status)})`);
         }
@@ -468,28 +415,31 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
       });
     } else {
       const geminiModel = model.replace(/^models\//, '');
-      try {
-        response = await requestGemini(geminiModel, 10_000);
-      } catch (error) {
-        if (!isRetryableGeminiFailure(error)) throw error;
-        console.error(error instanceof Error ? error.message : String(error));
-
-        let lastError: unknown = error;
-        for (const fallbackModel of GEMINI_FALLBACK_MODELS) {
-          if (fallbackModel === geminiModel) continue;
-          console.warn(`Gemini model unavailable; retrying with ${fallbackModel}.`);
+      const geminiModels = [geminiModel, ...GEMINI_FALLBACK_MODELS.filter((fallbackModel) => fallbackModel !== geminiModel)];
+      let lastError: unknown;
+      for (const [modelIndex, geminiModelToTry] of geminiModels.entries()) {
+        for (let attempt = 0; attempt < 2; attempt += 1) {
           try {
-            response = await requestGemini(fallbackModel, 12_000);
-            lastError = undefined;
+            response = await requestGemini(geminiModelToTry, modelIndex === 0 ? 10_000 : 12_000);
             break;
-          } catch (fallbackError) {
-            lastError = fallbackError;
-            console.error(fallbackError instanceof Error ? fallbackError.message : String(fallbackError));
-            if (!isRetryableGeminiFailure(fallbackError)) throw fallbackError;
+          } catch (error) {
+            lastError = error;
+            console.error(error instanceof Error ? error.message : String(error));
+            const status = getGeminiFailureStatus(error);
+            if (!isRetryableGeminiFailure(error)) throw error;
+            if (status === 503 && attempt === 0) {
+              await new Promise((resolveDelay) => setTimeout(resolveDelay, 1_500));
+              continue;
+            }
+            break;
           }
         }
-        if (lastError) throw lastError;
+        if (response) break;
+        if (modelIndex + 1 < geminiModels.length) {
+          console.warn(`Gemini model unavailable; retrying with ${geminiModels[modelIndex + 1]}.`);
+        }
       }
+      if (!response && lastError) throw lastError;
     }
 
     if (!response) throw new Error('Language model did not return a response');
@@ -556,14 +506,16 @@ export default async function handler(request: ChatRequest, response: ServerResp
     }
     const latestMessage = messages[messages.length - 1].content;
 
-    if (isPricingIntent(latestMessage) && !isLeadBudgetBandAnswer(messages)) {
+    if (isBookingVisitOrNegotiationIntent(latestMessage)) {
       const projectName = findProjectName(messages);
-      const redirectText = getRedirectText(latestMessage, projectName);
+      const projectSuffix = projectName ? ` for ${projectName}` : '';
+      const isRomanUrdu = /\b(?:mera|meri|main|mein|mujhe|chahiye|kya|hai|hain|aap|karna|se)\b/i.test(latestMessage);
+      const redirectText = isRomanUrdu
+        ? `Booking, site visit, ya negotiation${projectSuffix} ke liye hamari team se WhatsApp par rabta karein.`
+        : `For booking, a site visit, or negotiation${projectSuffix}, please contact our team on WhatsApp.`;
       sendJson(response, 200, {
         text: redirectText,
-        whatsappUrl: buildWhatsAppUrl(
-          `Hi, I want to know about pricing, booking, and payment plans${projectName ? ` for ${projectName}` : ''}.`
-        ),
+        whatsappUrl: buildWhatsAppUrl(`Hi, I would like to discuss booking, a site visit, or negotiation${projectSuffix}.`),
         redirectToWhatsApp: true,
       } satisfies ChatResponse);
       return;
@@ -587,17 +539,6 @@ export default async function handler(request: ChatRequest, response: ServerResp
 
     try {
       const answer = await callLanguageModel(messages);
-      if (hasProhibitedPricingOutput(answer)) {
-        const projectName = findProjectName(messages);
-        sendJson(response, 200, {
-          text: getRedirectText(latestMessage, projectName),
-          whatsappUrl: buildWhatsAppUrl(
-            `Hi, I want to know about pricing, booking, and payment plans${projectName ? ` for ${projectName}` : ''}.`
-          ),
-          redirectToWhatsApp: true,
-        } satisfies ChatResponse);
-        return;
-      }
       sendJson(response, 200, {
         text: answer,
         whatsappUrl: isLeadSummary(answer) ? buildWhatsAppUrl(answer) : buildWhatsAppUrl(),

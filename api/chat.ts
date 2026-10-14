@@ -15,6 +15,10 @@ const RATE_LIMIT_REQUESTS = 15;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const rateLimits = new Map<string, { startedAt: number; count: number }>();
 
+// Gemini fallback models (use the exact model IDs from AI Studio "Get code").
+const GEMINI_DEFAULT_MODEL = 'gemini-3.8-flash';
+const GEMINI_FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.1-flash-lite'];
+
 const PRICING_INTENT_KEYWORDS: Array<{ term: string; romanUrdu?: boolean }> = [
   { term: 'price' },
   { term: 'pricing' },
@@ -362,16 +366,27 @@ const extractGeminiText = (data: unknown) => {
 };
 
 const getLlmConfig = () => {
-  const hasGeminiKey = Boolean(process.env.GEMINI_API_KEY);
-  const provider = (process.env.LLM_PROVIDER || (hasGeminiKey ? 'google' : 'anthropic')).toLocaleLowerCase();
-  const apiKey = process.env.LLM_API_KEY || process.env.GEMINI_API_KEY;
-  const model = process.env.LLM_MODEL || (provider === 'google' || provider === 'gemini' ? 'gemini-3.8-flash' : 'claude-sonnet-4-20250514');
+  const geminiKey = process.env.GEMINI_API_KEY?.trim();
+  const llmKey = process.env.LLM_API_KEY?.trim();
+  const provider = (
+    process.env.LLM_PROVIDER?.trim() || (geminiKey ? 'google' : 'anthropic')
+  ).toLocaleLowerCase();
+  const apiKey = llmKey || geminiKey;
+  const isGoogle = provider === 'google' || provider === 'gemini';
+  const model = process.env.LLM_MODEL?.trim()
+    || (isGoogle ? GEMINI_DEFAULT_MODEL : 'claude-sonnet-4-20250514');
   return { provider, apiKey, model };
 };
 
+const isRetryableGeminiFailure = (failure: unknown) =>
+  failure instanceof Error
+  && (failure.name === 'AbortError'
+    || /status (404|429|500|502|503|504)\b/.test(failure.message)
+    || failure.message.includes('Gemini interaction did not complete'));
+
 const callLanguageModel = async (messages: ChatMessage[]) => {
   const { provider, apiKey, model } = getLlmConfig();
-  if (!apiKey) throw new Error('Language model is not configured');
+  if (!apiKey) throw new Error('Language model is not configured (missing LLM_API_KEY)');
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -383,11 +398,12 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
     if (!isAnthropic && !isOpenAI && !isGoogle) throw new Error('Unsupported language model provider');
 
     let response: Response | undefined;
+
     const requestGemini = async (geminiModel: string, timeoutMs: number) => {
       const geminiController = new AbortController();
       const geminiTimeout = setTimeout(() => geminiController.abort(), timeoutMs);
       try {
-        const response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+        const geminiResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -400,23 +416,21 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
               .map((message) => `${message.role === 'assistant' ? 'Assistant' : 'User'}: ${message.content}`)
               .join('\n\n'),
             generation_config: {
-              max_output_tokens: geminiModel === 'gemini-3.5-flash' ? 800 : MAX_OUTPUT_TOKENS,
+              max_output_tokens: MAX_OUTPUT_TOKENS,
               thinking_level: 'low',
             },
           }),
           signal: geminiController.signal,
         });
-        if (!response.ok) {
-          const details = (await response.text()).slice(0, 500);
-          throw new Error(`Gemini model request failed with status ${response.status}: ${details}`);
+        if (!geminiResponse.ok) {
+          const details = (await geminiResponse.text()).slice(0, 500);
+          throw new Error(`Gemini model request failed with status ${geminiResponse.status} (model: ${geminiModel}): ${details}`);
         }
-        if (response.ok) {
-          const interaction: unknown = await response.clone().json();
-          if (isRecord(interaction) && interaction.status !== 'completed') {
-            throw new Error(`Gemini interaction did not complete (status: ${String(interaction.status)})`);
-          }
+        const interaction: unknown = await geminiResponse.clone().json();
+        if (isRecord(interaction) && interaction.status !== 'completed') {
+          throw new Error(`Gemini interaction did not complete for model ${geminiModel} (status: ${String(interaction.status)})`);
         }
-        return response;
+        return geminiResponse;
       } finally {
         clearTimeout(geminiTimeout);
       }
@@ -457,15 +471,12 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
       try {
         response = await requestGemini(geminiModel, 10_000);
       } catch (error) {
-        const isRetryable = (failure: unknown) =>
-          failure instanceof Error
-          && (failure.name === 'AbortError'
-            || /status (429|500|502|503|504)\b/.test(failure.message)
-            || failure.message.includes('Gemini interaction did not complete'));
-        if (!isRetryable(error)) throw error;
+        if (!isRetryableGeminiFailure(error)) throw error;
+        console.error(error instanceof Error ? error.message : String(error));
 
         let lastError: unknown = error;
-        for (const fallbackModel of ['gemini-3.5-flash', 'gemini-3.1-flash-lite']) {
+        for (const fallbackModel of GEMINI_FALLBACK_MODELS) {
+          if (fallbackModel === geminiModel) continue;
           console.warn(`Gemini model unavailable; retrying with ${fallbackModel}.`);
           try {
             response = await requestGemini(fallbackModel, 12_000);
@@ -473,7 +484,8 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
             break;
           } catch (fallbackError) {
             lastError = fallbackError;
-            if (!isRetryable(fallbackError)) throw fallbackError;
+            console.error(fallbackError instanceof Error ? fallbackError.message : String(fallbackError));
+            if (!isRetryableGeminiFailure(fallbackError)) throw fallbackError;
           }
         }
         if (lastError) throw lastError;
@@ -576,10 +588,11 @@ export default async function handler(request: ChatRequest, response: ServerResp
     try {
       const answer = await callLanguageModel(messages);
       if (hasProhibitedPricingOutput(answer)) {
+        const projectName = findProjectName(messages);
         sendJson(response, 200, {
-          text: getRedirectText(latestMessage, findProjectName(messages)),
+          text: getRedirectText(latestMessage, projectName),
           whatsappUrl: buildWhatsAppUrl(
-            `Hi, I want to know about pricing, booking, and payment plans${findProjectName(messages) ? ` for ${findProjectName(messages)}` : ''}.`
+            `Hi, I want to know about pricing, booking, and payment plans${projectName ? ` for ${projectName}` : ''}.`
           ),
           redirectToWhatsApp: true,
         } satisfies ChatResponse);
@@ -591,10 +604,11 @@ export default async function handler(request: ChatRequest, response: ServerResp
         redirectToWhatsApp: isLeadSummary(answer),
       } satisfies ChatResponse);
     } catch (error) {
-      console.error('X AI assistant provider request failed:', error);
+      console.error(error instanceof Error ? error.message : String(error));
       sendJson(response, 503, errorResponse());
     }
-  } catch {
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
     sendJson(response, 400, { error: 'Unable to process this request.' });
   }
 }

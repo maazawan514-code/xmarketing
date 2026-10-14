@@ -31,6 +31,8 @@ GENERAL INFORMATION AND ALWAYS-INCLUDED PROJECT SUMMARIES
 ---------------------------------------------------------------------
 
 ## MADINA MALL & RESIDENCY
+
+### OVERVIEW
 - Type: Mixed-use building: shopping mall (ground, first and second floors) + residential apartments (studios, 1-bedroom, 2-bedroom, 3-bedroom)
 - Developer: D&B (Design & Build Real Estate Developers)
 - Facilities seen in plans: ground floor, first floor, second floor of shops with central atrium/escalators; separate apartment floors; site plan with surrounding roads, roundabout and landscaping
@@ -38,11 +40,15 @@ GENERAL INFORMATION AND ALWAYS-INCLUDED PROJECT SUMMARIES
 - Shop sizes are in square feet (gross). Residential sizes in square feet.
 - Payment structure: Booking amount + Confirmation amount (second floor section 1 uses "On Ground Breaking" instead of confirmation) + monthly installments + half-yearly payments + possession amount.
 - Ground floor shops 1A-8A: FULL PAYMENT ADVANCE ONLY (no installments).
-
-Column order in all tables below:
+- Ground-floor shops: 250-900 sq ft, approximately 1.51-5.69 crore; shops 1A-8A require full advance payment.
+- First-floor shops: 215-745 sq ft, approximately 80 lakh-2.91 crore.
+- Second-floor shops: 170-745 sq ft, approximately 45 lakh-2.06 crore.
+- Residential apartments: Studios 305-380 sq ft, approximately 47-59 lakh; 1-bedroom 485-590 sq ft, approximately 79-99 lakh; 2-bedroom 950-1,100 sq ft, approximately 1.69-1.96 crore; 3-bedroom 1,175 sq ft, approximately 2.09 crore.
+Column order in all Madina tables:
 Shop | Size (sq ft) | Rate per sq ft | Total price | Booking | Confirmation (or On Ground Breaking) | Installment per month | Half-yearly payment | Possession
 
-### MADINA MALL – GROUND FLOOR SHOPS (rate range 55,000 - 63,250 per sq ft)
+### GROUND FLOOR TABLE
+Rate range: 55,000-63,250 PKR per sq ft.
 1A | 815 | 60,500 | 49,307,500 | Full payment advance only
 2A | 880 | 63,250 | 55,660,000 | Full payment advance only
 3A | 900 | 63,250 | 56,925,000 | Full payment advance only
@@ -61,7 +67,8 @@ Shop | Size (sq ft) | Rate per sq ft | Total price | Booking | Confirmation (or 
 16A | 280 | 55,000 | 15,400,000 | 2,310,000 | 2,310,000 | 154,000 | 693,000 | 1,078,000
 17A | 275 | 55,000 | 15,125,000 | 2,268,750 | 2,268,750 | 151,250 | 680,625 | 1,058,750
 
-### MADINA MALL – FIRST FLOOR SHOPS (rate range 34,000 - 39,100 per sq ft)
+### FIRST FLOOR TABLE
+Rate range: 34,000-39,100 PKR per sq ft.
 1A | 745 | 39,100 | 29,129,500 | 4,369,425 | 4,369,425 | 291,295 | 1,310,828 | 2,039,065
 2A | 340 | 39,100 | 13,294,000 | 1,994,100 | 1,994,100 | 132,940 | 598,230 | 930,580
 3A | 290 | 39,100 | 11,339,000 | 1,700,850 | 1,700,850 | 113,390 | 510,255 | 793,730
@@ -85,7 +92,8 @@ Shop | Size (sq ft) | Rate per sq ft | Total price | Booking | Confirmation (or 
 21A | 500 | 37,400 | 18,700,000 | 2,805,000 | 2,805,000 | 187,000 | 841,500 | 1,309,000
 22A | 520 | 37,400 | 19,448,000 | 2,917,200 | 2,917,200 | 194,480 | 875,160 | 1,361,360
 
-### MADINA MALL – SECOND FLOOR SHOPS, SECTION 1 (shops 01-25; third column "On Ground Breaking" instead of Confirmation)
+### SECOND FLOOR TABLES
+Section 1 (shops 01-25; third column "On Ground Breaking" instead of Confirmation):
 01 | 250 | 28,800 | 7,200,000 | 1,080,000 | 1,080,000 | 72,000 | 324,000 | 504,000
 02 | 250 | 28,800 | 7,200,000 | 1,080,000 | 1,080,000 | 72,000 | 324,000 | 504,000
 03 | 350 | 28,800 | 10,080,000 | 1,512,000 | 1,512,000 | 100,800 | 453,600 | 705,600
@@ -112,7 +120,7 @@ Shop | Size (sq ft) | Rate per sq ft | Total price | Booking | Confirmation (or 
 24 | 410 | 24,000 | 9,840,000 | 1,476,000 | 1,476,000 | 98,400 | 442,800 | 688,800
 25 | 375 | 27,600 | 10,350,000 | 1,552,500 | 1,552,500 | 103,500 | 465,750 | 724,500
 
-### MADINA MALL – SECOND FLOOR SHOPS, SECTION 2 (shops 1A-22A)
+Section 2 (shops 1A-22A):
 1A | 745 | 27,600 | 20,562,000 | 3,084,300 | 3,084,300 | 205,620 | 925,290 | 1,439,340
 2A | 340 | 27,600 | 9,384,000 | 1,407,600 | 1,407,600 | 93,840 | 422,280 | 656,880
 3A | 290 | 27,600 | 8,004,000 | 1,200,600 | 1,200,600 | 80,040 | 360,180 | 560,280
@@ -138,7 +146,8 @@ Shop | Size (sq ft) | Rate per sq ft | Total price | Booking | Confirmation (or 
 
 (Note for team: both second-floor tables are labeled "Second Floor" in the brochure. Confirm whether one of them is actually another floor.)
 
-### MADINA RESIDENCY – RESIDENTIAL APARTMENTS, SECTION 1 (apt 01-20)
+### RESIDENTIAL TABLES
+Section 1 (apartments 01-20):
 Columns: Apt | Type | Size (sq ft) | Rate | Total | Booking | Confirmation | Monthly | Half-yearly | Possession
 01 | 3 Bedroom | 1175 | 17,825 | 20,944,375 | 3,141,656 | 3,141,656 | 209,444 | 942,497 | 1,466,106
 02 | 1 Bedroom | 555 | 17,825 | 9,892,875 | 1,483,931 | 1,483,931 | 98,929 | 445,179 | 692,501
@@ -161,7 +170,7 @@ Columns: Apt | Type | Size (sq ft) | Rate | Total | Booking | Confirmation | Mon
 19 | 1 Bedroom | 515 | 15,500 | 7,982,500 | 1,197,375 | 1,197,375 | 79,825 | 359,213 | 558,775
 20 | 1 Bedroom | 550 | 15,500 | 8,525,000 | 1,278,750 | 1,278,750 | 85,250 | 383,625 | 596,750
 
-### MADINA RESIDENCY – RESIDENTIAL APARTMENTS, SECTION 2 (apt 1A-18A)
+Section 2 (apartments 1A-18A):
 1A | 2 Bedroom | 980 | 17,825 | 17,478,500 | 3,058,738 | 3,058,738 | 174,785 | 699,140 | 873,925
 2A | 1 Bedroom | 515 | 17,825 | 9,182,875 | 1,607,003 | 1,607,003 | 91,829 | 367,315 | 459,144
 3A | 1 Bedroom | 515 | 17,825 | 9,182,875 | 1,607,003 | 1,607,003 | 91,829 | 367,315 | 459,144
@@ -180,9 +189,3 @@ Columns: Apt | Type | Size (sq ft) | Rate | Total | Booking | Confirmation | Mon
 16A | 1 Bedroom | 515 | 15,500 | 7,982,500 | 1,396,938 | 1,396,938 | 79,825 | 319,300 | 399,125
 17A | 1 Bedroom | 515 | 15,500 | 7,982,500 | 1,396,938 | 1,396,938 | 79,825 | 319,300 | 399,125
 18A | 1 Bedroom | 590 | 15,500 | 9,145,000 | 1,600,375 | 1,600,375 | 91,450 | 365,800 | 457,250
-
-### MADINA – QUICK SUMMARY (for overview answers)
-- Ground floor shops: 250 - 900 sq ft, about 1.51 - 5.69 crore (1A-8A full advance payment only)
-- First floor shops: 215 - 745 sq ft, about 80 lakh - 2.91 crore
-- Second floor shops: 170 - 745 sq ft, about 45 lakh - 2.06 crore
-- Residential: Studios 305-380 sq ft, about 47 - 59 lakh; 1-bedroom 485-590 sq ft, about 79 - 99 lakh; 2-bedroom 950-1100 sq ft, about 1.69 - 1.96 crore; 3-bedroom 1175 sq ft, about 2.09 crore

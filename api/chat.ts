@@ -45,8 +45,25 @@ const getProjectKnowledgeBlock = (projectName: 'INDIGO WALK' | 'MADINA MALL & RE
   return KNOWLEDGE_BASE.slice(contentStart, nextHeading < 0 ? undefined : nextHeading).trim();
 };
 
+const getProjectKnowledgeSubsection = (
+  projectName: 'MADINA MALL & RESIDENCY',
+  subsection: 'OVERVIEW' | 'GROUND FLOOR TABLE' | 'FIRST FLOOR TABLE' | 'SECOND FLOOR TABLES' | 'RESIDENTIAL TABLES'
+) => {
+  const projectBlock = getProjectKnowledgeBlock(projectName);
+  const heading = `### ${subsection}`;
+  const start = projectBlock.indexOf(heading);
+  if (start < 0) throw new Error(`Project knowledge subsection is missing: ${subsection}`);
+  const contentStart = start + heading.length;
+  const nextHeading = projectBlock.indexOf('\n### ', contentStart);
+  return projectBlock.slice(contentStart, nextHeading < 0 ? undefined : nextHeading).trim();
+};
+
 const INDIGO_WALK_KNOWLEDGE = getProjectKnowledgeBlock('INDIGO WALK');
-const MADINA_MALL_KNOWLEDGE = getProjectKnowledgeBlock('MADINA MALL & RESIDENCY');
+const MADINA_OVERVIEW_KNOWLEDGE = getProjectKnowledgeSubsection('MADINA MALL & RESIDENCY', 'OVERVIEW');
+const MADINA_GROUND_FLOOR_KNOWLEDGE = getProjectKnowledgeSubsection('MADINA MALL & RESIDENCY', 'GROUND FLOOR TABLE');
+const MADINA_FIRST_FLOOR_KNOWLEDGE = getProjectKnowledgeSubsection('MADINA MALL & RESIDENCY', 'FIRST FLOOR TABLE');
+const MADINA_SECOND_FLOOR_KNOWLEDGE = getProjectKnowledgeSubsection('MADINA MALL & RESIDENCY', 'SECOND FLOOR TABLES');
+const MADINA_RESIDENTIAL_KNOWLEDGE = getProjectKnowledgeSubsection('MADINA MALL & RESIDENCY', 'RESIDENTIAL TABLES');
 
 const SYSTEM_PROMPT = `You are "X AI Assistant" for X Marketing, a real estate marketing company in Lahore, Pakistan.
 
@@ -56,13 +73,17 @@ RULES:
 2. Give full helpful details for project overviews, including location, type, developer, size range, price range, key features, and payment-plan summary when supplied.
 3. For a specific shop/apartment, provide the table's size, rate per sq ft, total price, booking, confirmation (or On Ground Breaking), monthly installment, half-yearly payment, and possession amount. Preserve full payment advance-only terms where listed.
 4. If the user asks about a Madina Mall shop number without specifying its floor (for example, "9A" or "shop 5"), ask which floor they mean (ground, first, or second) before giving any price. Never guess the floor.
-5. Prices are in PKR. Convert large values to readable lakh/crore amounts without changing the values.
-6. Always state that prices and plans are subject to change.
-7. For booking, negotiation, site visits, or requested facts not in the supplied information, direct the user to the team on WhatsApp. Do not say WhatsApp is needed just to answer prices or installment questions present in the tables.
-8. Reply in the same language as the user (English or Roman Urdu). Keep answers clear and concise.
+5. For a general Madina Mall & Residency question with no floor or residential type specified, answer from the overview and price ranges, then ask which floor or residential type they want details about. Do not provide a floor table until the user's messages specify the relevant floor or residential type.
+6. Prices are in PKR. Convert large values to readable lakh/crore amounts without changing the values.
+7. Always state that prices and plans are subject to change.
+8. For booking, negotiation, site visits, or requested facts not in the supplied information, direct the user to the team on WhatsApp. Do not say WhatsApp is needed just to answer prices or installment questions present in the tables.
+9. Reply in the same language as the user (English or Roman Urdu). Keep answers clear and concise.
 
 ALWAYS-INCLUDED PROJECT SUMMARIES AND GENERAL RULES:
 ${GENERAL_PROJECT_INFORMATION}
+
+MADINA MALL & RESIDENCY OVERVIEW:
+${MADINA_OVERVIEW_KNOWLEDGE}
 
 Company WhatsApp: {{WHATSAPP_URL}}`;
 
@@ -173,10 +194,19 @@ const createSystemPrompt = (messages: ChatMessage[]) => {
     .map((message) => message.content)
     .join('\n')
     .toLocaleLowerCase();
+  const madinaHistory = history.replace(/\bmadina\s+mall\s*(?:&|and)\s*residency\b/gi, 'madina mall');
+  const madinaTables = [
+    /\bground(?:\s+floor)?\b/i.test(madinaHistory) ? MADINA_GROUND_FLOOR_KNOWLEDGE : '',
+    /\bfirst(?:\s+floor)?\b/i.test(madinaHistory) ? MADINA_FIRST_FLOOR_KNOWLEDGE : '',
+    /\bsecond(?:\s+floor)?\b/i.test(madinaHistory) ? MADINA_SECOND_FLOOR_KNOWLEDGE : '',
+    /\b(?:apartment|studio|[1-3]\s*[- ]?\s*bedroom|residency)\b/i.test(madinaHistory)
+      ? MADINA_RESIDENTIAL_KNOWLEDGE
+      : '',
+  ].filter(Boolean);
   const projectDetails = [
     /\bindigo(?:\s+walk)?\b/i.test(history) ? `## INDIGO WALK\n${INDIGO_WALK_KNOWLEDGE}` : '',
-    /\bmadina(?:\s+mall(?:\s*(?:&|and)\s*residency)?)?\b/i.test(history)
-      ? `## MADINA MALL & RESIDENCY\n${MADINA_MALL_KNOWLEDGE}`
+    /\bmadina(?:\s+mall(?:\s*(?:&|and)\s*residency)?)?\b/i.test(history) && madinaTables.length
+      ? `## MADINA MALL & RESIDENCY TABLES\n${madinaTables.join('\n\n')}`
       : '',
   ].filter(Boolean).join('\n\n');
   return SYSTEM_PROMPT

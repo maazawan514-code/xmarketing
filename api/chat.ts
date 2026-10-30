@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import Anthropic from '@anthropic-ai/sdk';
 
 const KNOWLEDGE_BASE = readFileSync(
   resolve(process.cwd(), 'data/knowledge/projects.md'),
@@ -12,13 +13,16 @@ const MAX_MESSAGES = 24;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_ASSISTANT_MESSAGE_LENGTH = 2_500;
 const MAX_OUTPUT_TOKENS = 1_024;
+// Claude's adaptive thinking shares the output budget, so leave room beyond the visible reply.
+const CLAUDE_MAX_OUTPUT_TOKENS = 4_000;
 const RATE_LIMIT_REQUESTS = 15;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const rateLimits = new Map<string, { startedAt: number; count: number }>();
 
 // Gemini fallback models (use the exact model IDs from AI Studio "Get code").
 const GEMINI_DEFAULT_MODEL = 'gemini-3.8-flash';
-const GEMINI_FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.1-flash-lite'];
+const CLAUDE_DEFAULT_MODEL = 'claude-opus-5-5';
+const GEMINI_FALLBACK_MODELS =['gemini-3.6-flash', 'gemini-3.1-flash-lite'];
 
 type ChatMessage = {
   role: 'user' | 'assistant';
@@ -241,15 +245,6 @@ const isRateLimited = (ip: string) => {
   return false;
 };
 
-const extractAnthropicText = (data: unknown) => {
-  if (!isRecord(data) || !Array.isArray(data.content)) return '';
-  return data.content
-    .filter((block): block is Record<string, unknown> => isRecord(block) && block.type === 'text' && typeof block.text === 'string')
-    .map((block) => block.text as string)
-    .join('\n')
-    .trim();
-};
-
 const extractOpenAIText = (data: unknown) => {
   if (!isRecord(data) || !Array.isArray(data.choices)) return '';
   const choice = data.choices[0];
@@ -281,14 +276,19 @@ const extractGeminiText = (data: unknown) => {
 
 const getLlmConfig = () => {
   const geminiKey = process.env.GEMINI_API_KEY?.trim();
+  const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
   const llmKey = process.env.LLM_API_KEY?.trim();
   const provider = (
-    process.env.LLM_PROVIDER?.trim() || (geminiKey ? 'google' : 'anthropic')
+    process.env.LLM_PROVIDER?.trim() || (anthropicKey ? 'anthropic' : geminiKey ? 'google' : 'anthropic')
   ).toLocaleLowerCase();
-  const apiKey = llmKey || geminiKey;
   const isGoogle = provider === 'google' || provider === 'gemini';
-  const model = process.env.LLM_MODEL?.trim()
-    || (isGoogle ? GEMINI_DEFAULT_MODEL : provider === 'openai' ? 'gpt-4o-mini' : 'claude-sonnet-5-5');
+  const apiKey = provider === 'anthropic' ? anthropicKey || llmKey : llmKey || geminiKey;
+  const defaultModel = isGoogle ? GEMINI_DEFAULT_MODEL : provider === 'openai' ? 'gpt-4o-mini' : CLAUDE_DEFAULT_MODEL;
+  const configuredModel = process.env.LLM_MODEL?.trim();
+  // Ignore a leftover model name from another provider (e.g. a gemini-* model with LLM_PROVIDER=anthropic).
+  const model = configuredModel && (provider !== 'anthropic' || configuredModel.startsWith('claude'))
+    ? configuredModel
+    : defaultModel;
   return { provider, apiKey, model };
 };
 
@@ -387,22 +387,23 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
     };
 
     if (isAnthropic) {
-      response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-          'x-api-key': apiKey,
-        },
-        body: JSON.stringify({
-          model,
-          max_tokens: MAX_OUTPUT_TOKENS,
-          system,
-          // Anthropic requires the conversation to start with a user turn (drops the UI greeting).
-          messages: messages.slice(messages.findIndex((message) => message.role === 'user')),
-        }),
-        signal: controller.signal,
-      });
+      const client = new Anthropic({ apiKey, timeout: REQUEST_TIMEOUT_MS, maxRetries: 1 });
+      const claudeResponse = await client.messages.create({
+        model,
+        max_tokens: CLAUDE_MAX_OUTPUT_TOKENS,
+        // Low effort keeps chat replies fast; thinking stays adaptive.
+        output_config: { effort: 'low' },
+        system,
+        // Claude requires the conversation to start with a user turn (drops the UI greeting).
+        messages: messages.slice(messages.findIndex((message) => message.role === 'user')),
+      }, { signal: controller.signal });
+      if (claudeResponse.stop_reason === 'refusal') throw new Error('Claude declined the request');
+      const answer = claudeResponse.content
+        .flatMap((block) => (block.type === 'text' ? [block.text] : []))
+        .join('\n')
+        .trim();
+      if (!answer) throw new Error(`Claude returned no answer (stop_reason: ${claudeResponse.stop_reason})`);
+      return answer;
     } else if (isOpenAI) {
       response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -462,7 +463,7 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
       throw new Error(`Language model request failed with status ${response.status}: ${details}`);
     }
     const data: unknown = await response.json();
-    const answer = isAnthropic ? extractAnthropicText(data) : isOpenAI ? extractOpenAIText(data) : extractGeminiText(data);
+    const answer = isOpenAI ? extractOpenAIText(data) : extractGeminiText(data);
     if (!answer) throw new Error('Language model returned no answer');
     return answer;
   } finally {

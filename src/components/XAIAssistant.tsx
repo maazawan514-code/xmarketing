@@ -4,8 +4,10 @@ import { XLogo } from './XLogo';
 
 const CHAT_ENDPOINT = '/api/chat';
 const MAX_MESSAGE_LENGTH = 500;
-const MAX_CONTEXT_MESSAGES = 16;
-const MAX_VISIBLE_MESSAGES = 17;
+const MAX_ASSISTANT_MESSAGE_LENGTH = 2500;
+const MAX_CONTEXT_MESSAGES = 24;
+const REQUEST_TIMEOUT_MS = 60_000;
+const MAX_VISIBLE_MESSAGES = 40;
 const QUICK_REPLIES = ['Indigo Walk', 'Madina Mall & Residency', 'Locations', 'Talk on WhatsApp'];
 const GREETING = 'Assalam o Alaikum! I am X AI Assistant. Ask me anything about our projects, locations, units and developers.';
 
@@ -23,35 +25,43 @@ interface ChatResponse {
 
 const renderInlineFormatting = (text: string): React.ReactNode[] => {
   const parts: React.ReactNode[] = [];
-  const pattern = /\*\*([^*]+)\*\*|\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
+  const pattern = /\*\*([^*]+)\*\*|\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)|(https?:\/\/[^\s)]+[^\s).,!?])|(?<![*\w])\*([^*\n]+)\*(?![*\w])/g;
   let cursor = 0;
   let match: RegExpExecArray | null;
+
+  const pushLink = (label: string, href: string, key: string) => {
+    try {
+      const url = new URL(href);
+      if (url.protocol === 'https:' || url.protocol === 'http:') {
+        parts.push(
+          <a
+            key={key}
+            href={url.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="break-all text-[#FF2A2A] underline underline-offset-2"
+          >
+            {label}
+          </a>
+        );
+        return;
+      }
+    } catch {
+      // Fall through to plain text for malformed URLs.
+    }
+    parts.push(label);
+  };
 
   while ((match = pattern.exec(text)) !== null) {
     if (match.index > cursor) parts.push(text.slice(cursor, match.index));
     if (match[1]) {
       parts.push(<strong key={`bold-${match.index}`} className="font-semibold text-white">{match[1]}</strong>);
     } else if (match[2] && match[3]) {
-      try {
-        const url = new URL(match[3]);
-        if (url.protocol === 'https:' || url.protocol === 'http:') {
-          parts.push(
-            <a
-              key={`link-${match.index}`}
-              href={url.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#FF2A2A] underline underline-offset-2"
-            >
-              {match[2]}
-            </a>
-          );
-        } else {
-          parts.push(match[2]);
-        }
-      } catch {
-        parts.push(match[2]);
-      }
+      pushLink(match[2], match[3], `link-${match.index}`);
+    } else if (match[4]) {
+      pushLink(match[4], match[4], `url-${match.index}`);
+    } else if (match[5]) {
+      parts.push(<em key={`em-${match.index}`} className="text-neutral-400">{match[5]}</em>);
     }
     cursor = pattern.lastIndex;
   }
@@ -77,13 +87,22 @@ const renderMessage = (text: string) => {
   };
 
   lines.forEach((line, index) => {
-    const bullet = line.match(/^\s*[-•]\s+(.+)$/);
+    const bullet = line.match(/^\s*(?:[-•*]|\d+[.)])\s+(.+)$/);
     if (bullet) {
       bullets.push(bullet[1]);
       return;
     }
     flushBullets();
-    if (line.trim()) {
+    const heading = line.match(/^\s*#{1,6}\s+(.+)$/);
+    if (heading) {
+      rendered.push(
+        <p key={`heading-${index}`} className="pt-1 font-semibold text-white">
+          {renderInlineFormatting(heading[1].replace(/^\*\*(.+)\*\*$/, '$1'))}
+        </p>
+      );
+    } else if (/^\s*(?:-{3,}|\*{3,}|_{3,})\s*$/.test(line)) {
+      rendered.push(<hr key={`rule-${index}`} className="my-2 border-white/10" />);
+    } else if (line.trim()) {
       rendered.push(
         <p key={`line-${index}`} className="min-h-[1em]">
           {renderInlineFormatting(line)}
@@ -157,6 +176,8 @@ export const XAIAssistant: React.FC = () => {
     setMessages(nextMessages);
     setInput('');
     setIsLoading(true);
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     try {
       const response = await fetch(CHAT_ENDPOINT, {
@@ -165,9 +186,13 @@ export const XAIAssistant: React.FC = () => {
         body: JSON.stringify({
           messages: nextMessages.slice(-MAX_CONTEXT_MESSAGES).map(({ role, content: text }) => ({
             role,
-            content: text.slice(0, MAX_MESSAGE_LENGTH),
+            // Keep the end of long assistant replies: follow-up questions are asked last.
+            content: role === 'assistant'
+              ? text.slice(-MAX_ASSISTANT_MESSAGE_LENGTH)
+              : text.slice(0, MAX_MESSAGE_LENGTH),
           })),
         }),
+        signal: controller.signal,
       });
       const data: ChatResponse = await response.json();
       if (typeof data.whatsappUrl === 'string') setWhatsappUrl(data.whatsappUrl);
@@ -186,6 +211,7 @@ export const XAIAssistant: React.FC = () => {
       };
       setMessages((current) => [...current, assistantMessage].slice(-MAX_VISIBLE_MESSAGES));
     } finally {
+      window.clearTimeout(timeout);
       setIsLoading(false);
     }
   };

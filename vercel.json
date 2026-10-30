@@ -1,7 +1,8 @@
 {
   "functions": {
     "api/chat.ts": {
-      "includeFiles": "data/knowledge/projects.md"
+      "includeFiles": "data/knowledge/projects.md",
+      "maxDuration": 60
     }
   }
 }

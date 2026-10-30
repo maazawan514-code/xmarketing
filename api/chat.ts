@@ -6,7 +6,7 @@ const KNOWLEDGE_BASE = readFileSync(
   resolve(process.cwd(), 'data/knowledge/projects.md'),
   'utf8'
 );
-const REQUEST_TIMEOUT_MS = 45_000;
+const REQUEST_TIMEOUT_MS = 25_000;
 const MAX_REQUEST_BYTES = 80_000;
 const MAX_MESSAGES = 24;
 const MAX_MESSAGE_LENGTH = 500;
@@ -298,6 +298,17 @@ const isRetryableGeminiFailure = (failure: unknown) =>
     || /status (404|429|500|502|503|504)\b/.test(failure.message)
     || failure.message.includes('Gemini interaction did not complete'));
 
+// Models that hit a per-day quota are skipped until it resets instead of being retried on every message.
+const geminiQuotaExhaustedUntil = new Map<string, number>();
+
+const getDailyQuotaResetMs = (message: string) => {
+  if (!/per day/i.test(message)) return 0;
+  const retry = message.match(/retry in (?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?/i);
+  if (!retry || !retry[0].replace(/retry in /i, '')) return 60 * 60_000;
+  const [, hours = '0', minutes = '0', seconds = '0'] = retry;
+  return ((Number(hours) * 60 + Number(minutes)) * 60 + Number(seconds)) * 1_000;
+};
+
 const getGeminiFailureStatus = (failure: unknown) => {
   if (!(failure instanceof Error)) return undefined;
   const status = failure.message.match(/\bstatus (\d{3})\b/);
@@ -413,6 +424,10 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
       const deadline = Date.now() + REQUEST_TIMEOUT_MS;
       let lastError: unknown;
       for (const [modelIndex, geminiModelToTry] of geminiModels.entries()) {
+        if ((geminiQuotaExhaustedUntil.get(geminiModelToTry) ?? 0) > Date.now()) {
+          lastError = new Error(`Gemini model ${geminiModelToTry} skipped: daily quota exhausted`);
+          continue;
+        }
         for (let attempt = 0; attempt < 2; attempt += 1) {
           const remainingMs = deadline - Date.now();
           if (remainingMs < 3_000) break;
@@ -424,6 +439,8 @@ const callLanguageModel = async (messages: ChatMessage[]) => {
             console.error(error instanceof Error ? error.message : String(error));
             const status = getGeminiFailureStatus(error);
             if (!isRetryableGeminiFailure(error)) throw error;
+            const quotaResetMs = status === 429 && error instanceof Error ? getDailyQuotaResetMs(error.message) : 0;
+            if (quotaResetMs) geminiQuotaExhaustedUntil.set(geminiModelToTry, Date.now() + quotaResetMs);
             if (status === 503 && attempt === 0) {
               await new Promise((resolveDelay) => setTimeout(resolveDelay, 1_500));
               continue;
